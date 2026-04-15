@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  bar-site:
+    build: .
+    container_name: dustin-bars
+    ports:
+      - "5000:5000"
+    volumes:
+      - bar-data:/data
+    environment:
+      - SECRET_KEY=change-this-to-something-secret
+      - MANAGER_PASSWORD=ogden2026
+    restart: unless-stopped
+
+volumes:
+  bar-data:
