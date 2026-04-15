@@ -1,665 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dustin Downs Establishments</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --a-bg:#0d0d0d;--a-primary:#c8a96e;--a-accent:#e63946;--a-text:#f0ebe3;--a-subtle:#2a1f14;--a-card:#161210;--a-border:#2e2318;
-  --o-bg:#f4efe5;--o-primary:#1a3a2a;--o-accent:#8b1a1a;--o-text:#1c1c1c;--o-subtle:#d4c9b0;--o-card:#ede6d4;--o-border:#c5b898;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Barlow',sans-serif;min-height:100vh;transition:background .5s,color .5s;overflow-x:hidden}
-body.alibi-mode{background:var(--a-bg);color:var(--a-text)}
-body.ogden-mode{background:var(--o-bg);color:var(--o-text)}
-
-/* ── TOGGLE BAR ── */
-.toggle-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:10px 20px;gap:14px;backdrop-filter:blur(12px)}
-body.alibi-mode .toggle-bar{background:rgba(10,8,6,.92);border-bottom:1px solid var(--a-border)}
-body.ogden-mode .toggle-bar{background:rgba(244,239,229,.92);border-bottom:1px solid var(--o-border)}
-.toggle-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;transition:all .4s;cursor:pointer}
-body.alibi-mode .lbl-alibi{color:var(--a-primary);opacity:1}
-body.alibi-mode .lbl-ogden{color:#666;opacity:.45}
-body.ogden-mode .lbl-ogden{color:var(--o-primary);opacity:1}
-body.ogden-mode .lbl-alibi{color:#999;opacity:.45}
-.toggle-switch{position:relative;width:58px;height:28px;cursor:pointer;flex-shrink:0}
-.toggle-track{position:absolute;inset:0;border-radius:28px;transition:background .4s}
-body.alibi-mode .toggle-track{background:#1e160d;border:1.5px solid var(--a-primary)}
-body.ogden-mode .toggle-track{background:#c9bda4;border:1.5px solid var(--o-primary)}
-.toggle-thumb{position:absolute;top:4px;width:18px;height:18px;border-radius:50%;transition:left .4s cubic-bezier(.68,-.55,.27,1.55),background .4s}
-body.alibi-mode .toggle-thumb{left:5px;background:var(--a-primary)}
-body.ogden-mode .toggle-thumb{left:33px;background:var(--o-primary)}
-.mgr-btn{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border:none;cursor:pointer;border-radius:2px;transition:all .2s}
-body.alibi-mode .mgr-btn{background:var(--a-subtle);color:var(--a-primary);border:1px solid var(--a-border)}
-body.ogden-mode .mgr-btn{background:var(--o-subtle);color:var(--o-primary);border:1px solid var(--o-border)}
-.mgr-btn:hover{opacity:.8}
-
-/* ── PAGES ── */
-.page{display:none}
-.page.active{display:block}
-
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px 60px;position:relative;overflow:hidden}
-body.alibi-mode .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(200,169,110,.07),transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(230,57,70,.05),transparent 50%);pointer-events:none}
-body.ogden-mode .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 60%,rgba(26,58,42,.07),transparent 55%);pointer-events:none}
-.hero-eye{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;margin-bottom:18px;animation:fadeUp .6s ease .1s both}
-body.alibi-mode .hero-eye{color:var(--a-accent)}
-body.ogden-mode .hero-eye{color:var(--o-accent)}
-.hero-name{font-family:'Playfair Display',serif;font-weight:900;line-height:.88;margin-bottom:14px;animation:fadeUp .6s ease .25s both}
-body.alibi-mode .hero-name{font-size:clamp(5rem,18vw,11rem);color:var(--a-text);text-shadow:0 0 80px rgba(200,169,110,.12)}
-body.ogden-mode .hero-name{font-size:clamp(3rem,10vw,7rem);color:var(--o-primary)}
-.hero-sub{font-family:'Barlow Condensed',sans-serif;font-weight:300;letter-spacing:.25em;text-transform:uppercase;margin-bottom:10px;animation:fadeUp .6s ease .38s both}
-body.alibi-mode .hero-sub{font-size:1rem;color:var(--a-primary)}
-body.ogden-mode .hero-sub{font-size:.95rem;color:var(--o-accent)}
-.hero-addr{font-size:.82rem;opacity:.45;margin-bottom:44px;animation:fadeUp .6s ease .48s both;letter-spacing:.04em}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp .6s ease .6s both}
-.btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.88rem;letter-spacing:.14em;text-transform:uppercase;padding:14px 32px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%)}
-.btn:hover{transform:translateY(-2px)}
-.btn-p{} 
-body.alibi-mode .btn-p{background:var(--a-primary);color:#0d0d0d;box-shadow:0 4px 20px rgba(200,169,110,.28)}
-body.alibi-mode .btn-p:hover{box-shadow:0 8px 28px rgba(200,169,110,.45)}
-body.ogden-mode .btn-p{background:var(--o-primary);color:#f4efe5;box-shadow:0 4px 20px rgba(26,58,42,.22)}
-body.ogden-mode .btn-p:hover{box-shadow:0 8px 28px rgba(26,58,42,.38)}
-.btn-s{background:transparent}
-body.alibi-mode .btn-s{color:var(--a-text);border:1.5px solid rgba(200,169,110,.38)}
-body.alibi-mode .btn-s:hover{border-color:var(--a-primary);background:rgba(200,169,110,.07)}
-body.ogden-mode .btn-s{color:var(--o-text);border:1.5px solid rgba(26,58,42,.28)}
-body.ogden-mode .btn-s:hover{border-color:var(--o-primary);background:rgba(26,58,42,.07)}
-
-/* ── SPECIALS BOX ── */
-.specials-wrap{max-width:760px;margin:0 auto;padding:0 24px 50px}
-.specials-box{border-radius:3px;padding:28px 32px;position:relative;overflow:hidden}
-body.alibi-mode .specials-box{background:var(--a-card);border:1px solid var(--a-border);border-left:4px solid var(--a-accent)}
-body.ogden-mode .specials-box{background:var(--o-card);border:1px solid var(--o-border);border-left:4px solid var(--o-accent)}
-.specials-tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;margin-bottom:14px}
-body.alibi-mode .specials-tag{color:var(--a-accent)}
-body.ogden-mode .specials-tag{color:var(--o-accent)}
-.specials-day{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:6px}
-.specials-items{font-size:.95rem;opacity:.75;line-height:1.7}
-.specials-price{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;margin-top:10px}
-body.alibi-mode .specials-price{color:var(--a-primary)}
-body.ogden-mode .specials-price{color:var(--o-accent)}
-.specials-updated{font-size:.72rem;opacity:.35;margin-top:12px;font-style:italic}
-
-/* ── DIVIDER ── */
-.divider{width:70px;height:2px;margin:0 auto 60px}
-body.alibi-mode .divider{background:linear-gradient(90deg,transparent,var(--a-primary),transparent)}
-body.ogden-mode .divider{background:linear-gradient(90deg,transparent,var(--o-primary),transparent)}
-
-/* ── MENU SECTIONS ── */
-.menu-wrap{max-width:1000px;margin:0 auto;padding:0 24px 80px}
-.sec-head{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;margin-bottom:6px}
-body.alibi-mode .sec-head{color:var(--a-text)}
-body.ogden-mode .sec-head{color:var(--o-primary)}
-.sec-sub{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;opacity:.45;margin-bottom:36px}
-.menu-cat{margin-bottom:44px}
-.cat-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;padding-bottom:10px;margin-bottom:18px;border-bottom:1px solid}
-body.alibi-mode .cat-title{color:var(--a-primary);border-color:var(--a-border)}
-body.ogden-mode .cat-title{color:var(--o-accent);border-color:var(--o-border)}
-.cat-note{font-size:.8rem;opacity:.45;margin-bottom:14px;font-style:italic}
-.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.items-grid.wide{grid-template-columns:1fr}
-.mi{padding:16px 18px;border-radius:2px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;transition:background .2s}
-body.alibi-mode .mi{background:var(--a-card);border-left:2px solid var(--a-border)}
-body.alibi-mode .mi:hover{background:#1c1410;border-left-color:var(--a-primary)}
-body.ogden-mode .mi{background:var(--o-card);border-left:2px solid var(--o-border)}
-body.ogden-mode .mi:hover{background:#e4dac8;border-left-color:var(--o-primary)}
-.mi-left{flex:1}
-.mi-name{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.97rem;letter-spacing:.03em}
-.mi-desc{font-size:.78rem;opacity:.5;margin-top:3px;line-height:1.5;font-style:italic}
-.mi-price{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.97rem;white-space:nowrap;flex-shrink:0}
-body.alibi-mode .mi-price{color:var(--a-primary)}
-body.ogden-mode .mi-price{color:var(--o-accent)}
-
-/* Pizza pricing table */
-.pizza-sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-.pizza-size-box{padding:14px;text-align:center;border-radius:2px}
-body.alibi-mode .pizza-size-box{background:var(--a-card);border:1px solid var(--a-border)}
-body.ogden-mode .pizza-size-box{background:var(--o-card);border:1px solid var(--o-border)}
-.psb-size{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:.1em}
-.psb-price{font-size:.82rem;opacity:.6;margin-top:3px}
-.psb-top{font-size:.75rem;opacity:.45;margin-top:2px}
-.toppings-list{font-size:.82rem;opacity:.5;font-style:italic;margin-bottom:20px;line-height:1.6}
-
-/* Weekly specials table - Alibi */
-.week-table{width:100%;border-collapse:collapse}
-.week-table th{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:8px 14px;text-align:left}
-body.alibi-mode .week-table th{color:var(--a-primary);border-bottom:1px solid var(--a-border)}
-body.ogden-mode .week-table th{color:var(--o-accent);border-bottom:1px solid var(--o-border)}
-.week-table td{padding:10px 14px;font-size:.88rem;vertical-align:top}
-body.alibi-mode .week-table tr:nth-child(even) td{background:var(--a-card)}
-body.ogden-mode .week-table tr:nth-child(even) td{background:var(--o-card)}
-.week-day{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.08em}
-.week-price{font-family:'Barlow Condensed',sans-serif;font-weight:700}
-body.alibi-mode .week-price{color:var(--a-primary)}
-body.ogden-mode .week-price{color:var(--o-accent)}
-
-/* ── NAV ── */
-.nav-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:40px}
-.nav-tab{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;padding:8px 18px;cursor:pointer;border:none;background:transparent;transition:all .2s;border-radius:2px}
-body.alibi-mode .nav-tab{color:var(--a-text);border:1px solid var(--a-border)}
-body.alibi-mode .nav-tab:hover,body.alibi-mode .nav-tab.active{background:var(--a-primary);color:#0d0d0d;border-color:var(--a-primary)}
-body.ogden-mode .nav-tab{color:var(--o-text);border:1px solid var(--o-border)}
-body.ogden-mode .nav-tab:hover,body.ogden-mode .nav-tab.active{background:var(--o-primary);color:#f4efe5;border-color:var(--o-primary)}
-.menu-section{display:none}
-.menu-section.active{display:block}
-
-/* ── FOOTER ── */
-footer{text-align:center;padding:36px 24px;font-size:.72rem;letter-spacing:.1em;opacity:.3;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;border-top:1px solid}
-body.alibi-mode footer{border-color:var(--a-border)}
-body.ogden-mode footer{border-color:var(--o-border)}
-
-/* ── MANAGER PANEL ── */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{width:min(480px,94vw);border-radius:4px;padding:36px;position:relative}
-body.alibi-mode .modal{background:#1a1310;border:1px solid var(--a-border)}
-body.ogden-mode .modal{background:#ede6d4;border:1px solid var(--o-border)}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:24px}
-body.alibi-mode .modal-title{color:var(--a-primary)}
-body.ogden-mode .modal-title{color:var(--o-primary)}
-.modal-close{position:absolute;top:14px;right:18px;background:none;border:none;cursor:pointer;font-size:1.4rem;opacity:.4;transition:opacity .2s}
-.modal-close:hover{opacity:.9}
-.field{margin-bottom:18px}
-.field label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;opacity:.6}
-.field input,.field textarea{width:100%;padding:10px 14px;border-radius:2px;font-family:'Barlow',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
-body.alibi-mode .field input,body.alibi-mode .field textarea{background:#0d0b09;border:1px solid var(--a-border);color:var(--a-text)}
-body.alibi-mode .field input:focus,body.alibi-mode .field textarea:focus{border-color:var(--a-primary)}
-body.ogden-mode .field input,body.ogden-mode .field textarea{background:#f8f3e8;border:1px solid var(--o-border);color:var(--o-text)}
-body.ogden-mode .field input:focus,body.ogden-mode .field textarea:focus{border-color:var(--o-primary)}
-.field textarea{resize:vertical;min-height:90px}
-.modal-msg{font-size:.82rem;opacity:.6;margin-top:12px;min-height:1.2em}
-body.alibi-mode .modal-msg.ok{color:#5cb85c}
-body.ogden-mode .modal-msg.ok{color:#2a7a4a}
-.modal-msg.err{color:#e63946}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Down-Town</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
 </head>
-<body class="alibi-mode">
+<body>
 
-<!-- TOGGLE BAR -->
-<div class="toggle-bar">
-  <span class="toggle-label lbl-alibi" onclick="switchTo('alibi')">ALiBi</span>
-  <div class="toggle-switch" onclick="toggleBar()" role="switch">
-    <div class="toggle-track"></div>
-    <div class="toggle-thumb"></div>
-  </div>
-  <span class="toggle-label lbl-ogden" onclick="switchTo('ogden')">Ogden Club</span>
-  <button class="mgr-btn" id="mgrBtn" onclick="openManagerPanel()">⚙ Manager</button>
-</div>
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="site-wordmark">Down-Town</div>
+      <nav class="topbar-nav">
+        <a href="#menu" class="nav-link">Menu</a>
+        <a href="#about" class="nav-link">About</a>
+        <button class="nav-link mgr-btn" id="mgrToggle">Manager</button>
+      </nav>
+    </div>
+  </header>
 
-<!-- ══════════════════════ ALIBI PAGE ══════════════════════ -->
-<div class="page active" id="page-alibi">
+  <!-- ── HERO / BAR SWITCHER ── -->
   <section class="hero">
-    <div class="hero-eye">Marinette, Wisconsin</div>
-    <h1 class="hero-name">ALiBi</h1>
-    <div class="hero-sub">Bar &amp; Grill</div>
-    <div class="hero-addr">829 Main St, Marinette, WI 54143 &nbsp;·&nbsp; Open Daily 10am–2am</div>
-    <div class="hero-btns">
-      <a href="#alibi-menu-section" class="btn btn-p" onclick="scrollToMenu('alibi')">View Menu</a>
-      <a href="tel:+17157329569" class="btn btn-s">📞 (715) 732-9569</a>
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content">
+      <div class="bar-toggle-wrap">
+        <button class="bar-tab active" data-bar="ogden" id="tabOgden">
+          <span class="tab-label">The Ogden Club</span>
+        </button>
+        <div class="toggle-divider">⬡</div>
+        <button class="bar-tab" data-bar="alibi" id="tabAlibi">
+          <span class="tab-label">Alibi</span>
+        </button>
+      </div>
+      <div class="hero-bar-name" id="heroBarName">The Ogden Club</div>
+      <div class="hero-tagline" id="heroTagline">Your neighborhood's home base</div>
+    </div>
+    <div class="hero-scroll-hint">↓ See the menu</div>
+  </section>
+
+  <!-- ── DAILY SPECIAL BANNER ── -->
+  <div class="special-banner" id="specialBanner" style="display:none">
+    <div class="special-banner-inner">
+      <span class="special-label">Today's Special</span>
+      <span class="special-title" id="specialTitle"></span>
+      <span class="special-desc" id="specialDesc"></span>
+      <span class="special-price" id="specialPrice"></span>
+    </div>
+  </div>
+
+  <!-- ── MENU SECTION ── -->
+  <section class="menu-section" id="menu">
+    <div class="menu-header">
+      <h2 class="menu-heading">Menu</h2>
+      <div class="menu-bar-name" id="menuBarLabel">The Ogden Club</div>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <div class="menu-loading">Loading menu…</div>
     </div>
   </section>
 
-  <!-- ALIBI WEEKLY SPECIALS BOX -->
-  <div class="specials-wrap">
-    <div class="specials-box" id="alibi-specials-box">
-      <div class="specials-tag">🔥 Weekly Specials</div>
-      <div class="specials-day" id="alibi-special-day"></div>
-      <div class="specials-items" id="alibi-special-items"></div>
-      <div class="specials-price" id="alibi-special-price"></div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ALIBI MENU -->
-  <div class="menu-wrap" id="alibi-menu-section">
-    <div class="sec-head">Menu</div>
-    <div class="sec-sub">Carry out available — call (715) 732-9569</div>
-
-    <div class="nav-bar">
-      <button class="nav-tab active" onclick="showMenuSection('alibi','appetizers')">Appetizers</button>
-      <button class="nav-tab" onclick="showMenuSection('alibi','burgers')">Burgers</button>
-      <button class="nav-tab" onclick="showMenuSection('alibi','tacos')">Tacos &amp; Sammiches</button>
-      <button class="nav-tab" onclick="showMenuSection('alibi','salads')">Salads</button>
-      <button class="nav-tab" onclick="showMenuSection('alibi','pizza')">Pizza</button>
-    </div>
-
-    <!-- APPETIZERS -->
-    <div class="menu-section active" id="alibi-appetizers">
-      <div class="menu-cat">
-        <div class="cat-title">Appetizers</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Homemade Fries</div></div><div class="mi-price">$3.75</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Beer Battered Fries</div></div><div class="mi-price">$4.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Deep-Fried Pickles</div></div><div class="mi-price">$5.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Strips (3–4)</div></div><div class="mi-price">$7.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Wings (6)</div></div><div class="mi-price">$7.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Fiesta Poppers</div></div><div class="mi-price">$6.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">White or Yellow Curds</div></div><div class="mi-price">$6.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Broccoli Bites (5)</div></div><div class="mi-price">$6.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Onion Rings</div></div><div class="mi-price">$6.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Deep-Fried Mushrooms</div></div><div class="mi-price">$6.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Elephant Ear</div></div><div class="mi-price">$5.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Crab Rangoons (4)</div></div><div class="mi-price">$5.95</div></div>
+  <!-- ── ABOUT ── -->
+  <section class="about-section" id="about">
+    <div class="about-inner">
+      <div class="about-card" id="aboutOgden">
+        <div class="about-card-name">The Ogden Club</div>
+        <p class="about-card-text">A cornerstone of the neighborhood. Cold beer, great food, and the kind of crowd that makes every game day feel like a party.</p>
+        <div class="about-hours">
+          <div class="hours-label">Hours</div>
+          <div>Mon–Thu: 11am – 12am</div>
+          <div>Fri–Sat: 11am – 2am</div>
+          <div>Sun: 12pm – 10pm</div>
         </div>
       </div>
-    </div>
-
-    <!-- BURGERS -->
-    <div class="menu-section" id="alibi-burgers">
-      <div class="menu-cat">
-        <div class="cat-title">Burgers</div>
-        <div class="cat-note">Add Lettuce, Tomato or Fried Onion +$.95 &nbsp;|&nbsp; Add Bacon +$1.95 &nbsp;|&nbsp; Double Your Patty +$2.45</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Hamburger*</div></div><div class="mi-price">$5.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Cheeseburger*</div></div><div class="mi-price">$6.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Grilled Cheeseburger*</div></div><div class="mi-price">$6.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Linda's Mushroom Swiss*</div></div><div class="mi-price">$7.45</div></div>
+      <div class="about-card" id="aboutAlibi">
+        <div class="about-card-name">Alibi</div>
+        <p class="about-card-text">Where regulars become family. A lively sports bar with scratch kitchen food, ice-cold drafts, and no bad seats in the house.</p>
+        <div class="about-hours">
+          <div class="hours-label">Hours</div>
+          <div>Mon–Thu: 3pm – 1am</div>
+          <div>Fri–Sat: 11am – 2am</div>
+          <div>Sun: 12pm – 11pm</div>
         </div>
       </div>
-      <div class="menu-cat">
-        <div class="cat-title">Specialty Burgers</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">The Alibi Burger*</div><div class="mi-desc">2 ¼lb Patties, 5 Onion Rings, 5 pieces of Bacon, American &amp; Swiss Cheese, BBQ Sauce</div></div><div class="mi-price">$10.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">AM/PM Burger*</div><div class="mi-desc">¼lb Patty, Fried Egg, Bacon &amp; American Cheese on a Hashbrown</div></div><div class="mi-price">$9.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Patty Melt*</div><div class="mi-desc">American &amp; Swiss Cheese, Fried Onions on Texas Toast</div></div><div class="mi-price">$7.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Jalapeño Bacon Ranch*</div><div class="mi-desc">2 ¼lb Patties, 3 Pieces of Bacon, Ranch, Jalapeños &amp; Swiss Cheese</div></div><div class="mi-price">$10.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Madness Burger*</div><div class="mi-desc">Topped with Fried Cheese Curds, Deep-Fried Pickles &amp; American Cheese</div></div><div class="mi-price">$9.95</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TACOS & SAMMICHES -->
-    <div class="menu-section" id="alibi-tacos">
-      <div class="menu-cat">
-        <div class="cat-title">Tacos, Sammiches &amp; More</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Homemade Taco</div><div class="mi-desc">Make it Supreme +$.95 · Taco Meat Contains Beans</div></div><div class="mi-price">$2.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Beef Gordita</div><div class="mi-desc">Make it Supreme +$.95</div></div><div class="mi-price">$4.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Grilled Cheese</div></div><div class="mi-price">$5.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">BLT</div></div><div class="mi-price">$6.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicago Style Gyro</div><div class="mi-desc">Authentic hand-shaved Gyro Meat, Tomatoes &amp; Onions, Tzatziki Sauce</div></div><div class="mi-price">$8.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Italian Beef</div><div class="mi-desc">Fontanini Beef, Sweet Peppers &amp; Mozzarella on a 6" Grilled Hoagie with Au Jus</div></div><div class="mi-price">$10.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">French Dip</div><div class="mi-desc">Fontanini Beef &amp; Melted Swiss on a 6" Grilled Hoagie with Au Jus</div></div><div class="mi-price">$10.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Grilled Chicken Sandwich</div><div class="mi-desc">5oz Tender Chicken Breast, Lettuce, Tomato &amp; Mayo</div></div><div class="mi-price">$8.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Loaded Nachos</div><div class="mi-desc">Homemade Nacho Chips, Taco Meat, Tomatoes, Lettuce, Cheese, Jalapeños, Black Olives, Onions &amp; Sweet Peppers</div></div><div class="mi-price">$10.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Indian Taco (Ma's Fry Bread)</div><div class="mi-desc">Authentic Fry Bread, Taco Meat, Tomatoes, Lettuce, Cheese, Jalapeños, Black Olives, Onions &amp; Sweet Peppers</div></div><div class="mi-price">$10.95</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SALADS -->
-    <div class="menu-section" id="alibi-salads">
-      <div class="menu-cat">
-        <div class="cat-title">Salads</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">House Salad</div></div><div class="mi-price">$7.45</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Bacon Ranch Salad</div></div><div class="mi-price">$8.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Gyro Salad</div></div><div class="mi-price">$8.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Taco Salad</div></div><div class="mi-price">$9.95</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PIZZA -->
-    <div class="menu-section" id="alibi-pizza">
-      <div class="menu-cat">
-        <div class="cat-title">Pizza &amp; Flatbread</div>
-        <div class="cat-note">Cauliflower Crust available — 12" 3-Topping $13.95</div>
-        <div style="margin-bottom:16px;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5">Traditional</div>
-        <div class="pizza-sizes">
-          <div class="pizza-size-box"><div class="psb-size">10"</div><div class="psb-price">Cheese &amp; Sauce $10.95</div><div class="psb-top">Toppings $1.25 ea</div></div>
-          <div class="pizza-size-box"><div class="psb-size">12"</div><div class="psb-price">Cheese &amp; Sauce $13.95</div><div class="psb-top">Toppings $1.50 ea</div></div>
-          <div class="pizza-size-box"><div class="psb-size">16"</div><div class="psb-price">Cheese &amp; Sauce $17.95</div><div class="psb-top">Toppings $1.75 ea</div></div>
-        </div>
-        <div class="toppings-list">Available Toppings: Pepperoni, Sausage, Hamburger, Bacon, Onions, Black Olives, Green Olives, Tomatoes, Mushrooms, Green Peppers, Sweet Peppers</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Roger's Special</div><div class="mi-desc">Black Olives, Onions, Sausage, Pepperoni, Hamburger &amp; Mushrooms</div></div><div class="mi-price">$18.95 / $22.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Bacon Cheeseburger</div><div class="mi-desc">Hamburger, Cheese, Onions, Bacon &amp; Pickles</div></div><div class="mi-price">$18.95 / $22.95</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Gyro Pizza</div><div class="mi-desc">Lamb, Onions, Tomatoes, Cheese, side of Tzatziki Sauce</div></div><div class="mi-price">$19.95 / $24.95</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer>&copy; 2026 ALiBi Bar &amp; Grill &nbsp;·&nbsp; A Dustin Downs Establishment &nbsp;·&nbsp; Marinette, WI</footer>
-</div>
-
-<!-- ══════════════════════ OGDEN CLUB PAGE ══════════════════════ -->
-<div class="page" id="page-ogden">
-  <section class="hero">
-    <div class="hero-eye">Menominee, Michigan</div>
-    <h1 class="hero-name">Ogden Club</h1>
-    <div class="hero-sub">Bar &amp; Restaurant</div>
-    <div class="hero-addr">414 10th Ave, Menominee, MI 49858 &nbsp;·&nbsp; Open Daily 11am–9pm or Later</div>
-    <div class="hero-btns">
-      <a href="#ogden-menu-section" class="btn btn-p" onclick="scrollToMenu('ogden')">View Menu</a>
-      <a href="tel:+19064244141" class="btn btn-s">📞 (906) 424-4141</a>
     </div>
   </section>
 
-  <!-- OGDEN DAILY SPECIAL BOX -->
-  <div class="specials-wrap">
-    <div class="specials-box" id="ogden-specials-box">
-      <div class="specials-tag">⭐ Today's Special</div>
-      <div class="specials-day" id="ogden-special-title">Check back soon!</div>
-      <div class="specials-items" id="ogden-special-desc"></div>
-      <div class="specials-price" id="ogden-special-price"></div>
-      <div class="specials-updated" id="ogden-special-updated"></div>
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Down-Town</div>
+      <div class="footer-bars">The Ogden Club &nbsp;·&nbsp; Alibi</div>
+      <div class="footer-copy">© 2026 Down-Town. All rights reserved.</div>
     </div>
-  </div>
+  </footer>
 
-  <div class="divider"></div>
+  <!-- ── MANAGER MODAL ── -->
+  <div class="modal-overlay" id="mgrModal">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose">✕</button>
 
-  <!-- OGDEN MENU -->
-  <div class="menu-wrap" id="ogden-menu-section">
-    <div class="sec-head">Menu</div>
-    <div class="sec-sub">Carry out available — call (906) 424-4141</div>
-
-    <div class="nav-bar">
-      <button class="nav-tab active" onclick="showMenuSection('ogden','appetizers')">Appetizers</button>
-      <button class="nav-tab" onclick="showMenuSection('ogden','salads')">Salads &amp; Soups</button>
-      <button class="nav-tab" onclick="showMenuSection('ogden','burgers')">Burgers &amp; Wraps</button>
-      <button class="nav-tab" onclick="showMenuSection('ogden','pizza')">Pizza &amp; Flatbread</button>
-      <button class="nav-tab" onclick="showMenuSection('ogden','kids')">Kids</button>
-    </div>
-
-    <!-- APPETIZERS -->
-    <div class="menu-section active" id="ogden-appetizers">
-      <div class="menu-cat">
-        <div class="cat-title">Appetizers &amp; More</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Wisconsin White Cheese Curds</div><div class="mi-desc">6oz, served with Buttermilk Ranch</div></div><div class="mi-price">$9</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Red &amp; Bleu Curds</div><div class="mi-desc">Tossed in Buffalo Sauce, topped with Bleu Cheese</div></div><div class="mi-price">$11</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Black &amp; White Curds</div><div class="mi-desc">Balsamic Glaze, Feta Cheese, Bacon Crumbles</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Sweet Chili Curds</div><div class="mi-desc">Sweet Chili Sauce &amp; Feta, served with Buttermilk Ranch</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Guacamole &amp; Chips</div><div class="mi-desc">Fresh, made to order — Pico de Gallo, Avocado &amp; Homemade Tortilla Chips</div></div><div class="mi-price">$10</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Freshly Cut French Fries</div></div><div class="mi-price">$4</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Garlic Parmesan French Fries</div></div><div class="mi-price">$5</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Cajun or Sweet Potato Fries</div></div><div class="mi-price">$5</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Quesadilla</div><div class="mi-desc">Grilled Chicken, Pico de Gallo, Mozzarella, Salsa &amp; Sour Cream</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Crab Rangoons</div><div class="mi-desc">5 Rangoons, Sweet &amp; Sour or Sweet Chili Sauce</div></div><div class="mi-price">$9</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Lobster Cakes</div><div class="mi-desc">2 Homemade Lobster Cakes, Famous Zesty Sauce</div></div><div class="mi-price">$14</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Fantail Shrimp</div><div class="mi-desc">5 Jumbo Fantail, Cocktail Sauce</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Wings</div><div class="mi-desc">8 Bone-In Wings — Buffalo, BBQ, Teriyaki or Sweet Chili</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Strips (3–4)</div></div><div class="mi-price">$11</div></div>
-        </div>
+      <!-- Login form -->
+      <div id="loginView">
+        <div class="modal-title">Manager Login</div>
+        <input type="password" class="modal-input" id="mgrPassword" placeholder="Password" />
+        <div class="modal-error" id="loginError"></div>
+        <button class="modal-btn" id="loginBtn">Sign In</button>
       </div>
-    </div>
 
-    <!-- SALADS & SOUPS -->
-    <div class="menu-section" id="ogden-salads">
-      <div class="menu-cat">
-        <div class="cat-title">Salads &amp; Soups</div>
-        <div class="cat-note">Add Grilled Chicken or Gyro Meat +$4 &nbsp;|&nbsp; Sauces: Zesty, Bleu Cheese, Ranch, BBQ, Buffalo, Teriyaki, Sweet Chili</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Greek Salad</div><div class="mi-desc">Mixed Greens, Greek Dressing, Artichoke Hearts, Greek Olives, Red Onions, Sweet Peppers, Feta Cheese</div></div><div class="mi-price">$14</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Caesar Salad</div><div class="mi-desc">Fresh Romaine, Tomatoes, Homemade Croutons, Parmesan &amp; Caesar Dressing</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Market Salad</div><div class="mi-desc">Mixed Greens, Tomatoes, Hardboiled Eggs, Bacon, Bleu Cheese, Sunflower Seeds, Avocado</div></div><div class="mi-price">$14</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">House Salad</div><div class="mi-desc">Fresh Romaine, Red Onions, Tomatoes, Homemade Croutons</div></div><div class="mi-price">$8</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Cup of Chef's Special Soup</div></div><div class="mi-price">$4</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Bowl of Chef's Special Soup</div></div><div class="mi-price">$7</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Baked French Onion Soup</div></div><div class="mi-price">$7</div></div>
-        </div>
-      </div>
-    </div>
+      <!-- Manager panel -->
+      <div id="managerPanel" style="display:none">
+        <div class="modal-title">Manager Panel</div>
 
-    <!-- BURGERS & WRAPS -->
-    <div class="menu-section" id="ogden-burgers">
-      <div class="menu-cat">
-        <div class="cat-title">Burgers, Wraps &amp; Sandwiches</div>
-        <div class="cat-note">All Burgers are ¼lb. Make it a Double for $2. &nbsp;|&nbsp; Add Lettuce, Tomato, Mushrooms or Fried Onions +$.75 &nbsp;|&nbsp; Add Fries, Bacon or Egg to any Meal +$2 (Home, Cajun, or Parmesan Dill)</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Hamburger*</div></div><div class="mi-price">$8</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Grilled Cheeseburger*</div><div class="mi-desc">¼lb Burger, 2 Slices of Cheese, Texas Toast or Marble Rye</div></div><div class="mi-price">$9</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Cheeseburger*</div></div><div class="mi-price">$9</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Patty Melt*</div><div class="mi-desc">¼lb Burger, 2 Slices Swiss, Sautéed Mushrooms &amp; Onions, Roasted Peppers, Texas Toast or Marble Rye</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Avocado Pico Burger*</div><div class="mi-desc">Mozzarella Cheese, Pico de Gallo, Avocado</div></div><div class="mi-price">$14</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Wild Rice Burger</div><div class="mi-desc">Homemade Wild Rice Patty, Spinach, Onion, Tomato &amp; Famous Zesty Sauce</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Jac'd Bacon &amp; Bleu Cheeseburger*</div><div class="mi-desc">¼lb Burger, Jac Apple Bacon Jam &amp; Bleu Cheese Crumbles</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Lobster Sandwich</div><div class="mi-desc">1 Lobster Cake, Spinach, Avocado, Tomato &amp; Zesty Sauce on a Bun</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">BLT</div><div class="mi-desc">6 Pieces of Bacon, Lettuce, Tomato &amp; Mayo, Texas Toast or Marble Rye</div></div><div class="mi-price">$9</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Bacon Ranch Wrap or Sandwich</div><div class="mi-desc">Grilled Chicken, Bacon, Cheddar &amp; Ranch</div></div><div class="mi-price">$11</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Buffalo Chicken Wrap</div><div class="mi-desc">Grilled Chicken, Spinach, Avocado, Bleu Cheese, Pico de Gallo, Buffalo Sauce in a Grilled Flour Tortilla</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Caesar Wrap</div><div class="mi-desc">Grilled Chicken, Lettuce, Parmesan, Homemade Croutons in a Grilled Flour Tortilla</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Italian Beef</div><div class="mi-desc">Fontanini Beef, Sweet Peppers &amp; Mozzarella on a 6" Grilled Hoagie with Au Jus</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Sweet Heat Wrap</div><div class="mi-desc">Grilled Chicken, Bacon, Shaved Carrots, Red Onions, Spinach, Pepper Jack, Sweet Chili Sauce</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Steak &amp; Beef Wrap</div><div class="mi-desc">Thinly Sliced Steak, Roasted Beets, Red Onions, Feta, Spinach in Brown Butter Dressing</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">French Dip</div><div class="mi-desc">Fontanini Beef, Melted Swiss on a 6" Grilled Hoagie with Au Jus</div></div><div class="mi-price">$12</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicago Style Gyro</div><div class="mi-desc">Authentic Hand-Shaved Gyro Meat, Tomatoes, Onions, Cilantro &amp; Feta, Tzatziki Sauce</div></div><div class="mi-price">$12</div></div>
+        <!-- Bar selector -->
+        <div class="mgr-bar-tabs">
+          <button class="mgr-tab active" data-mgr-bar="ogden" id="mgrTabOgden">Ogden Club</button>
+          <button class="mgr-tab" data-mgr-bar="alibi" id="mgrTabAlibi">Alibi</button>
         </div>
-      </div>
-    </div>
 
-    <!-- PIZZA & FLATBREAD -->
-    <div class="menu-section" id="ogden-pizza">
-      <div class="menu-cat">
-        <div class="cat-title">Pizza</div>
-        <div class="cat-note">Choose 12" or 16"</div>
-        <div class="toppings-list">Toppings: Sausage, Pepperoni, Ham, Pineapple, Bacon, Greek Olives, Black Olives, Sweet Peppers, Onions, Tomatoes, Mushrooms, and Artichoke Hearts</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Pizza Your Way!</div><div class="mi-desc">Cheese plus 1 Topping (12") or 2 Toppings (16")</div></div><div class="mi-price">$14 / $17</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">BBQ Chicken, Bacon &amp; Bleu Cheese</div><div class="mi-desc">Mozzarella, Grilled Chicken, Bacon, Red Onions &amp; Bleu Cheese</div></div><div class="mi-price">$19 / $25</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Classic Supreme</div><div class="mi-desc">Pepperoni, Sausage, Greek Olives, Red Onion, Tomato &amp; Mushrooms</div></div><div class="mi-price">$18 / $23</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Sweet &amp; Spicy Hawaiian</div><div class="mi-desc">Mozzarella, Ham, Pineapple, Red Onions, Red Peppers &amp; Jalapeños, topped with Sweet Chili Sauce</div></div><div class="mi-price">$19 / $25</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Veggie</div><div class="mi-desc">Red or White Sauce, Greek Olives, Red &amp; Green Peppers, Red Onions, Tomato, Mushrooms &amp; Artichoke Hearts</div></div><div class="mi-price">$19 / $25</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Steak &amp; Feta</div><div class="mi-desc">Garlic White Sauce, Thinly Sliced Tenderloin, Portabella Mushrooms, Caramelized Onion, Spinach, Feta &amp; Peppercorn Ranch</div></div><div class="mi-price">$20 / $26</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Gyro Pizza</div><div class="mi-desc">Gyro Meat, Tomatoes, Onions, Feta, Cilantro, Red or Tzatziki Sauce</div></div><div class="mi-price">$19 / $25</div></div>
+        <!-- Special editor -->
+        <div class="mgr-section">
+          <div class="mgr-section-label">Daily Special</div>
+          <input type="text" class="modal-input" id="specialTitleInput" placeholder="Special name" />
+          <input type="text" class="modal-input" id="specialDescInput" placeholder="Description" />
+          <input type="text" class="modal-input" id="specialPriceInput" placeholder="Price (e.g. 12.99)" />
+          <button class="modal-btn" id="saveSpecialBtn">Save Special</button>
+          <div class="mgr-feedback" id="specialFeedback"></div>
         </div>
-      </div>
-      <div class="menu-cat">
-        <div class="cat-title">Flatbread</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Margherita</div><div class="mi-desc">Basil Marinara, Mozzarella &amp; Parmesan, Basil &amp; Balsamic Glaze</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Thai Peanut</div><div class="mi-desc">Grilled Chicken, Thai Peanut Sauce, Sweet Chili Sauce &amp; Cilantro</div></div><div class="mi-price">$13</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">B.L.T.A.</div><div class="mi-desc">Crispy Bacon, Chopped Lettuce, Tomatoes, Avocado Mayo</div></div><div class="mi-price">$14</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">White Chicken</div><div class="mi-desc">Garlic White Sauce, Mozzarella, Spinach, Grilled Chicken, Bacon, Red Onions &amp; Parmesan</div></div><div class="mi-price">$13</div></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- KIDS -->
-    <div class="menu-section" id="ogden-kids">
-      <div class="menu-cat">
-        <div class="cat-title">For The Kids</div>
-        <div class="cat-note">All Kid's Sodas are Free (Excluding Root Beer)</div>
-        <div class="items-grid">
-          <div class="mi"><div class="mi-left"><div class="mi-name">Grilled Cheese</div><div class="mi-desc">2 Slices American Cheese on Texas Toast</div></div><div class="mi-price">$5</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Cheese Quesadilla</div><div class="mi-desc">Melted Mozzarella on a Flour Tortilla, Salsa &amp; Sour Cream</div></div><div class="mi-price">$6</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">Chicken Strip Basket with Fries</div></div><div class="mi-price">$7</div></div>
-          <div class="mi"><div class="mi-left"><div class="mi-name">6" Pita Pizza (Up to 2 Toppings)</div><div class="mi-desc">Sausage, Onion, Mushroom or Pepperoni</div></div><div class="mi-price">$6</div></div>
+        <!-- Menu editor -->
+        <div class="mgr-section">
+          <div class="mgr-section-label">Menu Items</div>
+          <div class="mgr-menu-editor" id="mgrMenuEditor"></div>
+          <button class="modal-btn modal-btn-secondary" id="addCategoryBtn">+ Add Category</button>
+          <button class="modal-btn" id="saveMenuBtn">Save Menu</button>
+          <div class="mgr-feedback" id="menuFeedback"></div>
         </div>
+
+        <button class="modal-btn modal-btn-ghost" id="logoutBtn">Log Out</button>
       </div>
     </div>
   </div>
 
-  <footer>&copy; 2026 Ogden Club &nbsp;·&nbsp; A Dustin Downs Establishment &nbsp;·&nbsp; Menominee, MI</footer>
-</div>
-
-<!-- ══════════════════ MANAGER MODAL ══════════════════ -->
-<div class="modal-overlay" id="mgrOverlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeManagerPanel()">✕</button>
-    <div class="modal-title" id="mgrTitle">Manager Login</div>
-
-    <!-- Login form -->
-    <div id="mgrLoginForm">
-      <div class="field">
-        <label>Manager Password</label>
-        <input type="password" id="mgrPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <button class="btn btn-p" onclick="doLogin()" style="width:100%;justify-content:center">Login</button>
-      <div class="modal-msg" id="loginMsg"></div>
-    </div>
-
-    <!-- Special editor -->
-    <div id="mgrEditor" style="display:none">
-      <div class="field">
-        <label>Special Title / Dish Name</label>
-        <input type="text" id="specialTitle" placeholder="e.g. Ribeye Steak Night">
-      </div>
-      <div class="field">
-        <label>Description</label>
-        <textarea id="specialDesc" placeholder="e.g. 12oz Ribeye with garlic mashed potatoes and seasonal vegetables"></textarea>
-      </div>
-      <div class="field">
-        <label>Price (optional)</label>
-        <input type="text" id="specialPrice" placeholder="e.g. $18.95">
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-p" onclick="saveSpecial()" style="flex:1;justify-content:center">Save Special</button>
-        <button class="btn btn-s" onclick="doLogout()" style="justify-content:center">Logout</button>
-      </div>
-      <div class="modal-msg" id="editorMsg"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── ALIBI WEEKLY SPECIALS (fixed) ──
-const ALIBI_SPECIALS = {
-  0: { day: 'Sunday',    items: 'Ask your server about today\'s Sunday special!', price: '' },
-  1: { day: 'Monday',    items: 'P.B. Bacon Burger* with Fries', price: '$8.95' },
-  2: { day: 'Tuesday',   items: '2 Tacos &nbsp;·&nbsp; Indian Taco &nbsp;·&nbsp; Loaded Nachos', price: '$4.50 / $8.95 / $8.95' },
-  3: { day: 'Wednesday', items: 'Gyros &nbsp;·&nbsp; "To-Go" Gyros', price: '$5.95 / $6.95' },
-  4: { day: 'Thursday',  items: 'Italian Beef or French Dip', price: '$8.95' },
-  5: { day: 'Friday',    items: '2 Cheeseburgers* &amp; 12" 3-Topping Pizza', price: 'Ask your server for pricing' },
-  6: { day: 'Saturday',  items: 'Ask your server about today\'s Saturday special!', price: '' },
-};
-
-function loadAlibiSpecial() {
-  const day = new Date().getDay();
-  const s = ALIBI_SPECIALS[day];
-  document.getElementById('alibi-special-day').textContent = s.day + ' Special';
-  document.getElementById('alibi-special-items').innerHTML = s.items;
-  document.getElementById('alibi-special-price').textContent = s.price;
-}
-
-// ── OGDEN SPECIALS (dynamic) ──
-async function loadOgdenSpecial() {
-  try {
-    const r = await fetch('/api/special');
-    const s = await r.json();
-    document.getElementById('ogden-special-title').textContent = s.title || 'Check back soon!';
-    document.getElementById('ogden-special-desc').textContent = s.description || '';
-    document.getElementById('ogden-special-price').textContent = s.price || '';
-    document.getElementById('ogden-special-updated').textContent = s.updated ? 'Last updated: ' + s.updated : '';
-  } catch(e) {
-    document.getElementById('ogden-special-title').textContent = 'Check back soon!';
-  }
-}
-
-// ── TOGGLE ──
-let currentBar = 'alibi';
-function toggleBar() {
-  switchTo(currentBar === 'alibi' ? 'ogden' : 'alibi');
-}
-function switchTo(bar) {
-  if (currentBar === bar) return;
-  currentBar = bar;
-  document.body.className = bar + '-mode';
-  document.getElementById('page-alibi').classList.toggle('active', bar === 'alibi');
-  document.getElementById('page-ogden').classList.toggle('active', bar === 'ogden');
-  window.scrollTo({top:0,behavior:'smooth'});
-  if (bar === 'ogden') loadOgdenSpecial();
-}
-
-function scrollToMenu(bar) {
-  setTimeout(() => {
-    const el = document.getElementById(bar + '-menu-section');
-    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 50);
-}
-
-// ── MENU TABS ──
-function showMenuSection(bar, section) {
-  const page = document.getElementById('page-' + bar);
-  page.querySelectorAll('.menu-section').forEach(s => s.classList.remove('active'));
-  page.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(bar + '-' + section).classList.add('active');
-  event.target.classList.add('active');
-}
-
-// ── MANAGER ──
-let isLoggedIn = false;
-async function openManagerPanel() {
-  document.getElementById('mgrOverlay').classList.add('open');
-  document.getElementById('loginMsg').textContent = '';
-  document.getElementById('mgrPassword').value = '';
-  try {
-    const r = await fetch('/api/auth');
-    const d = await r.json();
-    if (d.authenticated) showEditor();
-    else showLogin();
-  } catch(e) { showLogin(); }
-}
-function closeManagerPanel() {
-  document.getElementById('mgrOverlay').classList.remove('open');
-}
-function showLogin() {
-  document.getElementById('mgrTitle').textContent = 'Manager Login';
-  document.getElementById('mgrLoginForm').style.display = 'block';
-  document.getElementById('mgrEditor').style.display = 'none';
-}
-async function showEditor() {
-  document.getElementById('mgrTitle').textContent = "Today's Ogden Club Special";
-  document.getElementById('mgrLoginForm').style.display = 'none';
-  document.getElementById('mgrEditor').style.display = 'block';
-  document.getElementById('editorMsg').textContent = '';
-  try {
-    const r = await fetch('/api/special');
-    const s = await r.json();
-    document.getElementById('specialTitle').value = s.title || '';
-    document.getElementById('specialDesc').value = s.description || '';
-    document.getElementById('specialPrice').value = s.price || '';
-  } catch(e) {}
-}
-async function doLogin() {
-  const pw = document.getElementById('mgrPassword').value;
-  const msg = document.getElementById('loginMsg');
-  try {
-    const r = await fetch('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
-    const d = await r.json();
-    if (d.success) { showEditor(); }
-    else { msg.textContent = 'Incorrect password.'; msg.className = 'modal-msg err'; }
-  } catch(e) { msg.textContent = 'Connection error.'; msg.className = 'modal-msg err'; }
-}
-async function saveSpecial() {
-  const msg = document.getElementById('editorMsg');
-  const payload = {
-    title: document.getElementById('specialTitle').value,
-    description: document.getElementById('specialDesc').value,
-    price: document.getElementById('specialPrice').value
-  };
-  try {
-    const r = await fetch('/api/special', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const d = await r.json();
-    if (d.success) {
-      msg.textContent = '✓ Special saved!'; msg.className = 'modal-msg ok';
-      loadOgdenSpecial();
-      setTimeout(() => closeManagerPanel(), 1200);
-    }
-  } catch(e) { msg.textContent = 'Error saving.'; msg.className = 'modal-msg err'; }
-}
-async function doLogout() {
-  await fetch('/api/logout', {method:'POST'});
-  showLogin();
-}
-
-// close on backdrop click
-document.getElementById('mgrOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeManagerPanel();
-});
-
-// ── INIT ──
-loadAlibiSpecial();
-</script>
+  <script src="/static/js/app.js"></script>
 </body>
 </html>

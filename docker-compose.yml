@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  bar-site:
+  downtown:
     build: .
-    container_name: dustin-bars
+    container_name: downtown-bars
     ports:
       - "5000:5000"
     volumes:
-      - bar-data:/data
+      - downtown-data:/data
     environment:
-      - SECRET_KEY=change-this-to-something-secret
-      - MANAGER_PASSWORD=ogden2026
+      - SECRET_KEY=change-this-to-something-secure
+      - MANAGER_PASSWORD=downtown2026
     restart: unless-stopped
 
 volumes:
-  bar-data:
+  downtown-data:
