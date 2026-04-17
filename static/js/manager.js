@@ -26,15 +26,16 @@ async function loadBarData() {
 
 // ── Login ──────────────────────────────────────────────────────────────
 $('loginBtn').addEventListener('click', async () => {
+  const un = $('mgrUsername').value.trim();
   const pw = $('mgrPassword').value;
   $('loginError').textContent = '';
-  if (!pw) return;
+  if (!un || !pw) return;
 
   try {
     const res  = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
+      body: JSON.stringify({ username: un, password: pw })
     });
     const data = await res.json();
     if (data.success) {
@@ -49,8 +50,8 @@ $('loginBtn').addEventListener('click', async () => {
   }
 });
 
-$('mgrPassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('loginBtn').click();
+['mgrUsername', 'mgrPassword'].forEach(id => {
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 });
 
 function showPanel(role, username, permissions) {
@@ -74,6 +75,7 @@ function showPanel(role, username, permissions) {
 
   if (canSpecials) syncSpecial();
   if (canMenu)     renderMenuEditor();
+  syncEvents();
 }
 
 // ── Bar tabs ───────────────────────────────────────────────────────────
@@ -84,6 +86,7 @@ document.querySelectorAll('.mgr-tab').forEach(tab => {
     tab.classList.add('active');
     if ($('specialSection').style.display !== 'none') syncSpecial();
     if ($('menuSection').style.display    !== 'none') renderMenuEditor();
+    syncEvents();
   });
 });
 
@@ -230,6 +233,76 @@ $('saveMenuBtn').addEventListener('click', async () => {
   }
 });
 
+// ── Events editor ──────────────────────────────────────────────────────
+let eventsWorking = [];
+
+function syncEvents() {
+  eventsWorking = [...((barData[mgrBar] && barData[mgrBar].events) || [])];
+  renderEventsList();
+}
+
+function renderEventsList() {
+  const list = $('eventsList');
+  list.innerHTML = '';
+  if (!eventsWorking.length) {
+    const none = document.createElement('div');
+    none.className   = 'events-empty';
+    none.textContent = 'No events yet.';
+    list.appendChild(none);
+    return;
+  }
+  eventsWorking.forEach((e, i) => {
+    const row      = document.createElement('div');
+    row.className  = 'event-mgr-row';
+
+    const info        = document.createElement('span');
+    info.className    = 'event-mgr-info';
+    info.textContent  = e.title + (e.date ? ` — ${e.date}` : '');
+
+    const del         = document.createElement('button');
+    del.className     = 'account-delete';
+    del.textContent   = 'Remove';
+    del.addEventListener('click', () => {
+      eventsWorking.splice(i, 1);
+      renderEventsList();
+    });
+
+    row.appendChild(info);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+$('addEventBtn').addEventListener('click', () => {
+  const title = $('newEventTitle').value.trim();
+  if (!title) { flash('eventsFeedback', 'Title is required.'); return; }
+  eventsWorking.push({
+    title,
+    date:        $('newEventDate').value.trim(),
+    description: $('newEventDesc').value.trim()
+  });
+  $('newEventTitle').value = '';
+  $('newEventDate').value  = '';
+  $('newEventDesc').value  = '';
+  renderEventsList();
+});
+
+$('saveEventsBtn').addEventListener('click', async () => {
+  try {
+    const res = await fetch(`/api/bars/${mgrBar}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ events: eventsWorking })
+    });
+    if ((await res.json()).success) {
+      barData[mgrBar].events = [...eventsWorking];
+      flash('eventsFeedback', 'Events saved!');
+    }
+  } catch {
+    flash('eventsFeedback', 'Error — check connection.');
+  }
+});
+
 // ── Account management (admin only) ────────────────────────────────────
 async function loadAccounts() {
   try {
@@ -346,7 +419,9 @@ $('logoutBtn').addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST' });
   $('managerPanel').style.display     = 'none';
   $('accountsSection').style.display  = 'none';
+  $('eventsSection').style.display    = '';
   $('loginView').style.display        = '';
+  $('mgrUsername').value              = '';
   $('mgrPassword').value              = '';
 });
 
