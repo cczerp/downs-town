@@ -27,21 +27,35 @@
   --topbar:   rgba(5, 6, 12, .96);
 }
 
-/* ── OGDEN THEME  ─────────────────────────────────────────────────────────
-   Logo is black & white — warm gold on dark reads cleanly against it.
-   Swap --accent (and optionally --bg) once the customer confirms colors.
+/* ── OGDEN THEME  — warm tan · sage green · light ─────────────────────────
+   Light background so the B&W logo pops. Green accent, minimal red/blue.
 ──────────────────────────────────────────────────────────────────────── */
 .ogden-theme {
-  --bg:       #070b12;
-  --bg2:      #0d1520;
-  --accent:   #c9a33a;
-  --accent2:  #dab84a;
-  --text:     #e8eaf0;
-  --muted:    #7a8098;
-  --border:   #1c2535;
-  --card:     #0f1825;
-  --topbar:   rgba(7, 11, 18, .95);
+  --bg:       #f3ebd4;
+  --bg2:      #e8dab8;
+  --accent:   #4a7a4c;
+  --accent2:  #2d5fa8;
+  --text:     #1c180e;
+  --muted:    #7a7253;
+  --border:   #c4b080;
+  --card:     #ebe0c2;
+  --topbar:   rgba(243, 235, 212, .97);
 }
+
+/* Light-theme overrides — undo dark-mode rgba assumptions */
+.ogden-theme .cat-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+.ogden-theme .menu-item {
+  border-bottom-color: rgba(0, 0, 0, .08);
+}
+.ogden-theme .special-banner {
+  background: #b03020;
+  color: #ffffff;
+}
+.ogden-theme .special-desc { color: rgba(255, 255, 255, .8); }
+.ogden-theme .menu-btn      { color: #ffffff; }
 
 /* ── BASE ─────────────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
@@ -398,6 +412,25 @@ body.manager-page {
 .account-create-row {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
 }
+.account-perm-wrap { display: flex; gap: 5px; }
+.perm-toggle {
+  background: transparent; border: 1px solid #282828; color: #555;
+  font-family: 'Barlow Condensed', sans-serif; font-size: .7rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 9px; cursor: pointer; border-radius: 2px; transition: all .2s;
+}
+.perm-toggle.active  { border-color: #5a9a5c; color: #5a9a5c; }
+.perm-toggle:hover:not(.active) { border-color: #3a3a3a; color: #aaa; }
+
+/* Staff link — bottom-right corner, barely visible */
+.staff-link {
+  position: fixed; bottom: 18px; right: 22px; z-index: 100;
+  font-family: 'Barlow Condensed', sans-serif; font-size: .7rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); opacity: .3; text-decoration: none;
+  transition: opacity .2s;
+}
+.staff-link:hover { opacity: .75; }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
