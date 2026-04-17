@@ -9,79 +9,92 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
-<body class="home-page">
 
-  <!-- Fixed top nav -->
+<!--
+  Default bar is Alibi. home.js switches the body class and swaps visible content.
+  To change the default to Ogden, change "alibi-theme" → "ogden-theme" below
+  and flip the style="display:none" between the two bar-content divs.
+-->
+<body class="alibi-theme">
+
+  <!-- Topbar: wordmark only — color responds to active theme -->
   <header class="home-topbar">
     <div class="home-topbar-inner">
-      <div class="home-wordmark">Down-Town</div>
-      <nav class="home-nav">
-        <a href="#alibi">Alibi</a>
-        <a href="#ogden">The Ogden Club</a>
-      </nav>
+      <span class="home-wordmark">Down-Town</span>
     </div>
   </header>
 
-  <!-- ── ALIBI SECTION ──────────────────────────────────────────────── -->
-  <section class="bar-section alibi-theme" id="alibi">
-    <div class="bar-section-inner">
+  <div class="home-stage">
+
+    <!-- ── TOGGLE — the only persistent element ── -->
+    <div class="bar-toggle-wrap">
+      <button class="bar-tab active" data-bar="alibi">Alibi</button>
+      <span class="toggle-divider">⬡</span>
+      <button class="bar-tab" data-bar="ogden">The Ogden Club</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ALIBI  (shown by default)
+    ══════════════════════════════════════════ -->
+    <div class="bar-content" id="alibiContent">
 
       <!--
-        LOGO: To use the real Alibi logo, save the image as
-        /static/logos/alibi-logo.png and replace the div below with:
+        LOGO: save alibi-logo.png to /static/logos/ then replace the div below with:
         <img src="/static/logos/alibi-logo.png" alt="Alibi" class="logo-img">
       -->
       <div class="bar-logo-area">
         <div class="logo-placeholder">Alibi</div>
       </div>
 
-      <h1 class="bar-section-name">Alibi</h1>
-      <p class="bar-section-tagline">Where regulars become family</p>
+      <h1 class="bar-name">Alibi</h1>
+      <p class="bar-tagline">Where regulars become family</p>
+      <p class="bar-about">
+        A lively sports bar with scratch kitchen food, ice-cold drafts,
+        and no bad seats in the house.
+      </p>
 
       <div class="bar-hours">
         <span class="bar-hours-label">Hours</span>
-        Mon – Thu &nbsp;&nbsp; 3pm – 1am<br>
-        Fri – Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am – 2am<br>
-        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm – 11pm
+        Mon &ndash; Thu &nbsp;&nbsp; 3pm &ndash; 1am<br>
+        Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
+        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 11pm
       </div>
 
-      <a href="/alibi/menu" class="view-menu-btn">View Full Menu &rarr;</a>
+      <a href="/alibi/menu" class="menu-btn">Menu &rarr;</a>
     </div>
-  </section>
 
-  <!-- ── OGDEN CLUB SECTION ─────────────────────────────────────────── -->
-  <section class="bar-section ogden-theme" id="ogden">
-    <div class="bar-section-inner">
+    <!-- ══════════════════════════════════════════
+         THE OGDEN CLUB  (hidden until toggled)
+    ══════════════════════════════════════════ -->
+    <div class="bar-content" id="ogdenContent" style="display:none">
 
       <!--
-        LOGO: To use the real Ogden Club logo, save the image as
-        /static/logos/ogden-logo.png and replace the div below with:
+        LOGO: save ogden-logo.png to /static/logos/ then replace the div below with:
         <img src="/static/logos/ogden-logo.png" alt="The Ogden Club" class="logo-img">
       -->
       <div class="bar-logo-area">
         <div class="logo-placeholder">The Ogden Club</div>
       </div>
 
-      <h1 class="bar-section-name">The Ogden Club</h1>
-      <p class="bar-section-tagline">Your neighborhood's home base</p>
+      <h1 class="bar-name">The Ogden Club</h1>
+      <p class="bar-tagline">Your neighborhood's home base</p>
+      <p class="bar-about">
+        A cornerstone of the neighborhood. Cold beer, great food, and the kind
+        of crowd that makes every game day feel like a party.
+      </p>
 
       <div class="bar-hours">
         <span class="bar-hours-label">Hours</span>
-        Mon – Thu &nbsp;&nbsp; 11am – 12am<br>
-        Fri – Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am – 2am<br>
-        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm – 10pm
+        Mon &ndash; Thu &nbsp;&nbsp; 11am &ndash; 12am<br>
+        Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
+        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 10pm
       </div>
 
-      <a href="/ogden/menu" class="view-menu-btn">View Full Menu &rarr;</a>
+      <a href="/ogden/menu" class="menu-btn">Menu &rarr;</a>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-wordmark">Down-Town</div>
-    <div class="footer-bars">Alibi &nbsp;·&nbsp; The Ogden Club</div>
-    <div class="footer-copy">&copy; 2026 Down-Town. All rights reserved.</div>
-  </footer>
+  </div><!-- /home-stage -->
 
+  <script src="/static/js/home.js"></script>
 </body>
 </html>
