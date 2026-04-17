@@ -3,11 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Menu — Alibi</title>
+  <title>Alibi Bar &amp; Grill Menu | Marinette, WI</title>
+  <meta name="description" content="View the full menu for Alibi Bar &amp; Grill in Marinette, WI. Burgers, appetizers, pizza, tacos, salads, and weekly specials. Call 715-732-9569." />
+  <meta property="og:title"       content="Alibi Bar &amp; Grill Menu | Marinette, WI" />
+  <meta property="og:description" content="Burgers, appetizers, pizza, tacos, salads, and weekly specials. Call 715-732-9569." />
+  <meta property="og:type"        content="restaurant.menu" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Alibi Bar & Grill",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "829 Main St",
+      "addressLocality": "Marinette",
+      "addressRegion": "WI",
+      "postalCode": "54143"
+    },
+    "telephone": "+17157329569",
+    "servesCuisine": ["American", "Bar Food", "Pizza"],
+    "openingHours": ["Mo-Th 15:00-01:00", "Fr-Sa 11:00-02:00", "Su 12:00-23:00"],
+    "hasMenu": "https://ogdenclubmi.com/alibi/menu"
+  }
+  </script>
 </head>
 <body class="alibi-theme">
 
@@ -15,12 +37,15 @@
     <div class="topbar-inner">
 
       <div class="topbar-logo-area">
-        <img src="/static/logos/alibi-logo.png" alt="Alibi" class="topbar-logo-img"
+        <img src="/static/logos/alibi-logo.png" alt="Alibi Bar &amp; Grill" class="topbar-logo-img"
              onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
         <span class="topbar-logo-text" style="display:none">Alibi</span>
       </div>
 
-      <a href="/#alibi" class="topbar-back">&larr; Down-Town</a>
+      <div class="topbar-right">
+        <a href="tel:7157329569" class="topbar-call">&#9742; Call Now</a>
+        <a href="/#alibi" class="topbar-back">&larr; Down-Town</a>
+      </div>
     </div>
   </header>
 
@@ -39,10 +64,14 @@
     <!-- Menu heading -->
     <div class="menu-hero">
       <div class="menu-hero-name">Menu</div>
-      <div class="menu-hero-sub">Alibi &mdash; Marinette, WI</div>
+      <a class="menu-hero-sub"
+         href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143"
+         target="_blank" rel="noopener">
+        Alibi Bar &amp; Grill &mdash; 829 Main St, Marinette, WI &mdash; Get Directions
+      </a>
     </div>
 
-    <!-- Category filter buttons (All is hardcoded; rest added by JS) -->
+    <!-- Category filter buttons -->
     <div class="category-filter" id="categoryFilter">
       <button class="cat-btn active" data-cat="all">All</button>
     </div>
@@ -51,6 +80,16 @@
     <div class="menu-section">
       <div class="menu-grid" id="menuGrid">
         <div class="menu-loading">Loading menu&hellip;</div>
+      </div>
+    </div>
+
+    <!-- Bottom call + address -->
+    <div class="menu-footer">
+      <a href="tel:7157329569" class="menu-footer-call">&#9742;&nbsp; Call Now &mdash; 715-732-9569</a>
+      <div class="menu-footer-address">
+        <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener">
+          829 Main St, Marinette, WI 54143 &mdash; Get Directions
+        </a>
       </div>
     </div>
 

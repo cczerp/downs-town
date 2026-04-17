@@ -2,8 +2,8 @@
 
 const $ = id => document.getElementById(id);
 
-let barData = null;
-let mgrBar  = 'ogden';
+let barData  = null;
+let mgrBar   = 'ogden';
 let userRole = 'manager';
 
 // ── Boot ───────────────────────────────────────────────────────────────
@@ -14,7 +14,7 @@ async function init() {
     if (data.authenticated) {
       userRole = data.role;
       await loadBarData();
-      showPanel(data.role, data.username);
+      showPanel(data.role, data.username, data.permissions);
     }
   } catch { /* start at login */ }
 }
@@ -26,21 +26,22 @@ async function loadBarData() {
 
 // ── Login ──────────────────────────────────────────────────────────────
 $('loginBtn').addEventListener('click', async () => {
+  const un = $('mgrUsername').value.trim();
   const pw = $('mgrPassword').value;
   $('loginError').textContent = '';
-  if (!pw) return;
+  if (!un || !pw) return;
 
   try {
     const res  = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
+      body: JSON.stringify({ username: un, password: pw })
     });
     const data = await res.json();
     if (data.success) {
       userRole = data.role;
       await loadBarData();
-      showPanel(data.role, data.username);
+      showPanel(data.role, data.username, data.permissions);
     } else {
       $('loginError').textContent = 'Invalid password.';
     }
@@ -49,11 +50,11 @@ $('loginBtn').addEventListener('click', async () => {
   }
 });
 
-$('mgrPassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') $('loginBtn').click();
+['mgrUsername', 'mgrPassword'].forEach(id => {
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 });
 
-function showPanel(role, username) {
+function showPanel(role, username, permissions) {
   $('loginView').style.display    = 'none';
   $('managerPanel').style.display = '';
 
@@ -65,8 +66,16 @@ function showPanel(role, username) {
     $('panelTitle').textContent = `Manager Panel${username ? ' — ' + username : ''}`;
   }
 
-  syncSpecial();
-  renderMenuEditor();
+  // permissions === null means admin (full access); array means check it
+  const canSpecials = (role === 'admin') || !permissions || permissions.includes('specials');
+  const canMenu     = (role === 'admin') || !permissions || permissions.includes('menu');
+
+  $('specialSection').style.display = canSpecials ? '' : 'none';
+  $('menuSection').style.display    = canMenu     ? '' : 'none';
+
+  if (canSpecials) syncSpecial();
+  if (canMenu)     renderMenuEditor();
+  syncEvents();
 }
 
 // ── Bar tabs ───────────────────────────────────────────────────────────
@@ -75,8 +84,9 @@ document.querySelectorAll('.mgr-tab').forEach(tab => {
     mgrBar = tab.dataset.mgrBar;
     document.querySelectorAll('.mgr-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    syncSpecial();
-    renderMenuEditor();
+    if ($('specialSection').style.display !== 'none') syncSpecial();
+    if ($('menuSection').style.display    !== 'none') renderMenuEditor();
+    syncEvents();
   });
 });
 
@@ -223,6 +233,76 @@ $('saveMenuBtn').addEventListener('click', async () => {
   }
 });
 
+// ── Events editor ──────────────────────────────────────────────────────
+let eventsWorking = [];
+
+function syncEvents() {
+  eventsWorking = [...((barData[mgrBar] && barData[mgrBar].events) || [])];
+  renderEventsList();
+}
+
+function renderEventsList() {
+  const list = $('eventsList');
+  list.innerHTML = '';
+  if (!eventsWorking.length) {
+    const none = document.createElement('div');
+    none.className   = 'events-empty';
+    none.textContent = 'No events yet.';
+    list.appendChild(none);
+    return;
+  }
+  eventsWorking.forEach((e, i) => {
+    const row      = document.createElement('div');
+    row.className  = 'event-mgr-row';
+
+    const info        = document.createElement('span');
+    info.className    = 'event-mgr-info';
+    info.textContent  = e.title + (e.date ? ` — ${e.date}` : '');
+
+    const del         = document.createElement('button');
+    del.className     = 'account-delete';
+    del.textContent   = 'Remove';
+    del.addEventListener('click', () => {
+      eventsWorking.splice(i, 1);
+      renderEventsList();
+    });
+
+    row.appendChild(info);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+$('addEventBtn').addEventListener('click', () => {
+  const title = $('newEventTitle').value.trim();
+  if (!title) { flash('eventsFeedback', 'Title is required.'); return; }
+  eventsWorking.push({
+    title,
+    date:        $('newEventDate').value.trim(),
+    description: $('newEventDesc').value.trim()
+  });
+  $('newEventTitle').value = '';
+  $('newEventDate').value  = '';
+  $('newEventDesc').value  = '';
+  renderEventsList();
+});
+
+$('saveEventsBtn').addEventListener('click', async () => {
+  try {
+    const res = await fetch(`/api/bars/${mgrBar}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ events: eventsWorking })
+    });
+    if ((await res.json()).success) {
+      barData[mgrBar].events = [...eventsWorking];
+      flash('eventsFeedback', 'Events saved!');
+    }
+  } catch {
+    flash('eventsFeedback', 'Error — check connection.');
+  }
+});
+
 // ── Account management (admin only) ────────────────────────────────────
 async function loadAccounts() {
   try {
@@ -238,13 +318,15 @@ function renderAccounts(accounts) {
   const list = $('accountList');
   list.innerHTML = '';
 
-  // Always show the admin entry (can't be deleted)
+  // Admin entry — always shown, cannot be deleted
   const adminRow = document.createElement('div');
   adminRow.className = 'account-list-item';
   adminRow.innerHTML = '<span class="account-username is-admin">admin (env var)</span>';
   list.appendChild(adminRow);
 
-  accounts.forEach(({ username }) => {
+  accounts.forEach(({ username, permissions }) => {
+    let perms = permissions || ['specials', 'menu'];
+
     const row       = document.createElement('div');
     row.className   = 'account-list-item';
 
@@ -252,12 +334,84 @@ function renderAccounts(accounts) {
     nameEl.className    = 'account-username';
     nameEl.textContent  = username;
 
+    // Permission toggles
+    const permWrap      = document.createElement('div');
+    permWrap.className  = 'account-perm-wrap';
+
+    ['specials', 'menu'].forEach(perm => {
+      const btn       = document.createElement('button');
+      btn.className   = 'perm-toggle' + (perms.includes(perm) ? ' active' : '');
+      btn.textContent = perm.charAt(0).toUpperCase() + perm.slice(1);
+
+      btn.addEventListener('click', async () => {
+        const wasActive = btn.classList.contains('active');
+        const newPerms  = wasActive
+          ? perms.filter(p => p !== perm)
+          : [...perms, perm];
+        try {
+          const res = await fetch(`/api/accounts/${encodeURIComponent(username)}/permissions`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ permissions: newPerms })
+          });
+          if ((await res.json()).success) {
+            perms = newPerms;
+            btn.classList.toggle('active', !wasActive);
+          }
+        } catch {
+          flash('accountFeedback', 'Error updating permissions.');
+        }
+      });
+
+      permWrap.appendChild(btn);
+    });
+
+    // Reset password button — expands inline
+    const resetBtn       = document.createElement('button');
+    resetBtn.className   = 'perm-toggle';
+    resetBtn.textContent = 'Reset PW';
+    resetBtn.addEventListener('click', () => {
+      if (row.querySelector('.pw-reset-input')) return; // already open
+
+      const pwIn     = document.createElement('input');
+      pwIn.type      = 'password';
+      pwIn.className = 'pw-reset-input';
+      pwIn.placeholder = 'New password';
+
+      const setBtn       = document.createElement('button');
+      setBtn.className   = 'perm-toggle active';
+      setBtn.textContent = 'Set';
+      setBtn.addEventListener('click', async () => {
+        const newPw = pwIn.value;
+        if (!newPw) return;
+        try {
+          const res = await fetch(`/api/accounts/${encodeURIComponent(username)}/password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: newPw })
+          });
+          if ((await res.json()).success) {
+            flash('accountFeedback', `Password reset for "${username}".`);
+            pwIn.remove(); setBtn.remove();
+          }
+        } catch {
+          flash('accountFeedback', 'Error resetting password.');
+        }
+      });
+
+      permWrap.appendChild(pwIn);
+      permWrap.appendChild(setBtn);
+      pwIn.focus();
+    });
+    permWrap.appendChild(resetBtn);
+
     const delBtn        = document.createElement('button');
     delBtn.className    = 'account-delete';
     delBtn.textContent  = 'Remove';
     delBtn.addEventListener('click', () => deleteAccount(username, row));
 
     row.appendChild(nameEl);
+    row.appendChild(permWrap);
     row.appendChild(delBtn);
     list.appendChild(row);
   });
@@ -302,10 +456,12 @@ $('createAccountBtn').addEventListener('click', async () => {
 // ── Logout ─────────────────────────────────────────────────────────────
 $('logoutBtn').addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST' });
-  $('managerPanel').style.display  = 'none';
-  $('accountsSection').style.display = 'none';
-  $('loginView').style.display     = '';
-  $('mgrPassword').value           = '';
+  $('managerPanel').style.display     = 'none';
+  $('accountsSection').style.display  = 'none';
+  $('eventsSection').style.display    = '';
+  $('loginView').style.display        = '';
+  $('mgrUsername').value              = '';
+  $('mgrPassword').value              = '';
 });
 
 // ── Utility ────────────────────────────────────────────────────────────
