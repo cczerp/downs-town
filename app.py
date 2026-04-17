@@ -1,11 +1,18 @@
 from flask import Flask, jsonify, request, session, send_from_directory
+from werkzeug.security import generate_password_hash, check_password_hash
 import json, os, datetime
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY', 'downtown-bars-2026')
 
 DATA_DIR = '/data'
-MANAGER_PASSWORD = os.environ.get('MANAGER_PASSWORD', 'downtown2026')
+
+# ADMIN_PASSWORD is the master key (set as env var on Render).
+# Falls back to MANAGER_PASSWORD for backwards compatibility.
+ADMIN_PASSWORD = (
+    os.environ.get('ADMIN_PASSWORD') or
+    os.environ.get('MANAGER_PASSWORD', 'downtown2026')
+)
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -23,6 +30,21 @@ def save_json(filename, data):
     os.makedirs(DATA_DIR, exist_ok=True)
     with open(data_path(filename), 'w') as f:
         json.dump(data, f, indent=2)
+
+def load_accounts():
+    return load_json('accounts.json', [])
+
+def save_accounts(accounts):
+    save_json('accounts.json', accounts)
+
+def authenticate(password):
+    """Return (role, username): ('admin','admin'), ('manager', username), or (None, None)."""
+    if password == ADMIN_PASSWORD:
+        return 'admin', 'admin'
+    for acct in load_accounts():
+        if check_password_hash(acct['password_hash'], password):
+            return 'manager', acct['username']
+    return None, None
 
 def default_menus():
     return {
@@ -139,20 +161,59 @@ def set_menu(bar):
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    body = request.json
-    if body.get('password') == MANAGER_PASSWORD:
+    body = request.json or {}
+    role, username = authenticate(body.get('password', ''))
+    if role:
         session['manager'] = True
-        return jsonify({'success': True})
+        session['role']    = role
+        session['username'] = username
+        return jsonify({'success': True, 'role': role})
     return jsonify({'error': 'Invalid password'}), 401
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
-    session.pop('manager', None)
+    session.clear()
     return jsonify({'success': True})
 
 @app.route('/api/auth', methods=['GET'])
 def check_auth():
-    return jsonify({'authenticated': bool(session.get('manager'))})
+    return jsonify({
+        'authenticated': bool(session.get('manager')),
+        'role':          session.get('role', 'manager'),
+        'username':      session.get('username', '')
+    })
+
+# ── account management (admin only) ───────────────────────────────────────────
+
+@app.route('/api/accounts', methods=['GET'])
+def list_accounts():
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    return jsonify([{'username': a['username']} for a in load_accounts()])
+
+@app.route('/api/accounts', methods=['POST'])
+def create_account():
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    body     = request.json or {}
+    username = body.get('username', '').strip()
+    password = body.get('password', '')
+    if not username or not password:
+        return jsonify({'error': 'Username and password are required'}), 400
+    accounts = load_accounts()
+    if any(a['username'] == username for a in accounts):
+        return jsonify({'error': 'That username already exists'}), 400
+    accounts.append({'username': username, 'password_hash': generate_password_hash(password)})
+    save_accounts(accounts)
+    return jsonify({'success': True})
+
+@app.route('/api/accounts/<username>', methods=['DELETE'])
+def delete_account(username):
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    accounts = [a for a in load_accounts() if a['username'] != username]
+    save_accounts(accounts)
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

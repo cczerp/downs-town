@@ -4,14 +4,17 @@ const $ = id => document.getElementById(id);
 
 let barData = null;
 let mgrBar  = 'ogden';
+let userRole = 'manager';
 
 // ── Boot ───────────────────────────────────────────────────────────────
 async function init() {
   try {
-    const res = await fetch('/api/auth');
-    if ((await res.json()).authenticated) {
+    const res  = await fetch('/api/auth');
+    const data = await res.json();
+    if (data.authenticated) {
+      userRole = data.role;
       await loadBarData();
-      showPanel();
+      showPanel(data.role, data.username);
     }
   } catch { /* start at login */ }
 }
@@ -35,8 +38,9 @@ $('loginBtn').addEventListener('click', async () => {
     });
     const data = await res.json();
     if (data.success) {
+      userRole = data.role;
       await loadBarData();
-      showPanel();
+      showPanel(data.role, data.username);
     } else {
       $('loginError').textContent = 'Invalid password.';
     }
@@ -49,9 +53,18 @@ $('mgrPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') $('loginBtn').click();
 });
 
-function showPanel() {
+function showPanel(role, username) {
   $('loginView').style.display    = 'none';
   $('managerPanel').style.display = '';
+
+  if (role === 'admin') {
+    $('panelTitle').textContent = 'Admin Panel';
+    $('accountsSection').style.display = '';
+    loadAccounts();
+  } else {
+    $('panelTitle').textContent = `Manager Panel${username ? ' — ' + username : ''}`;
+  }
+
   syncSpecial();
   renderMenuEditor();
 }
@@ -110,7 +123,6 @@ function buildCatBlock(catName, items) {
   const block      = document.createElement('div');
   block.className  = 'mgr-category-block';
 
-  // Header row with editable category name and delete button
   const hdr       = document.createElement('div');
   hdr.className   = 'mgr-category-header';
 
@@ -128,11 +140,9 @@ function buildCatBlock(catName, items) {
   hdr.appendChild(nameIn);
   hdr.appendChild(delCat);
 
-  // Item rows
   const itemsDiv = document.createElement('div');
   items.forEach(item => itemsDiv.appendChild(buildItemRow(item)));
 
-  // Add item button
   const addBtn        = document.createElement('button');
   addBtn.className    = 'mgr-add-item-btn';
   addBtn.textContent  = '+ Add item';
@@ -140,7 +150,6 @@ function buildCatBlock(catName, items) {
     itemsDiv.appendChild(buildItemRow({ name: '', description: '', price: '' }));
   });
 
-  // Expose data-collection method for Save
   block._getData = () => ({
     name:  nameIn.value.trim(),
     items: Array.from(itemsDiv.querySelectorAll('.mgr-item-row')).map(row => {
@@ -214,12 +223,89 @@ $('saveMenuBtn').addEventListener('click', async () => {
   }
 });
 
+// ── Account management (admin only) ────────────────────────────────────
+async function loadAccounts() {
+  try {
+    const res      = await fetch('/api/accounts');
+    const accounts = await res.json();
+    renderAccounts(accounts);
+  } catch {
+    $('accountFeedback').textContent = 'Could not load accounts.';
+  }
+}
+
+function renderAccounts(accounts) {
+  const list = $('accountList');
+  list.innerHTML = '';
+
+  // Always show the admin entry (can't be deleted)
+  const adminRow = document.createElement('div');
+  adminRow.className = 'account-list-item';
+  adminRow.innerHTML = '<span class="account-username is-admin">admin (env var)</span>';
+  list.appendChild(adminRow);
+
+  accounts.forEach(({ username }) => {
+    const row       = document.createElement('div');
+    row.className   = 'account-list-item';
+
+    const nameEl        = document.createElement('span');
+    nameEl.className    = 'account-username';
+    nameEl.textContent  = username;
+
+    const delBtn        = document.createElement('button');
+    delBtn.className    = 'account-delete';
+    delBtn.textContent  = 'Remove';
+    delBtn.addEventListener('click', () => deleteAccount(username, row));
+
+    row.appendChild(nameEl);
+    row.appendChild(delBtn);
+    list.appendChild(row);
+  });
+}
+
+async function deleteAccount(username, rowEl) {
+  try {
+    const res = await fetch(`/api/accounts/${encodeURIComponent(username)}`, { method: 'DELETE' });
+    if ((await res.json()).success) rowEl.remove();
+  } catch {
+    flash('accountFeedback', 'Error removing account.');
+  }
+}
+
+$('createAccountBtn').addEventListener('click', async () => {
+  const username = $('newUsername').value.trim();
+  const password = $('newPassword').value;
+  if (!username || !password) {
+    flash('accountFeedback', 'Username and password required.');
+    return;
+  }
+  try {
+    const res  = await fetch('/api/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      $('newUsername').value = '';
+      $('newPassword').value = '';
+      flash('accountFeedback', `Account "${username}" created.`);
+      loadAccounts();
+    } else {
+      flash('accountFeedback', data.error || 'Could not create account.');
+    }
+  } catch {
+    flash('accountFeedback', 'Error — check connection.');
+  }
+});
+
 // ── Logout ─────────────────────────────────────────────────────────────
 $('logoutBtn').addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST' });
-  $('managerPanel').style.display = 'none';
-  $('loginView').style.display    = '';
-  $('mgrPassword').value          = '';
+  $('managerPanel').style.display  = 'none';
+  $('accountsSection').style.display = 'none';
+  $('loginView').style.display     = '';
+  $('mgrPassword').value           = '';
 });
 
 // ── Utility ────────────────────────────────────────────────────────────
