@@ -47,53 +47,55 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 
 /* ══════════════════════════════════════════════════════════════════════════
    HOME PAGE
+   body gets .alibi-theme or .ogden-theme — the entire page re-themes.
+   The toggle is the only persistent element; everything else is bar-specific.
 ══════════════════════════════════════════════════════════════════════════ */
 
-body.home-page { background: #050505; color: #f0ebe3; }
-
+/* Topbar — themed via CSS vars set on body */
 .home-topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  background: rgba(5, 5, 5, .92); backdrop-filter: blur(14px);
-  border-bottom: 1px solid #111;
+  background: var(--topbar); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  transition: background .4s;
 }
 .home-topbar-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 28px;
-  height: 52px; display: flex; align-items: center; justify-content: space-between;
+  max-width: 1100px; margin: 0 auto; padding: 0 28px;
+  height: 52px; display: flex; align-items: center;
 }
 .home-wordmark {
   font-family: 'Bebas Neue', cursive; font-size: 1.4rem;
-  letter-spacing: .1em; color: #c8a86b;
+  letter-spacing: .1em; color: var(--accent);
 }
-.home-nav { display: flex; gap: 28px; }
-.home-nav a {
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
-  font-size: .78rem; letter-spacing: .16em; text-transform: uppercase;
-  color: #666; text-decoration: none; transition: color .2s;
-}
-.home-nav a:hover { color: #f0ebe3; }
 
-/* ── Bar section (full-height, self-contained theme) ── */
-.bar-section {
+/* Full-page stage — one bar shown at a time */
+.home-stage {
   min-height: 100vh;
-  background: var(--bg); color: var(--text);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 100px 24px 64px;
-  position: relative; overflow: hidden;
-}
-.bar-section::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.025) 0%, transparent 65%);
-  pointer-events: none;
-}
-.bar-section-inner {
-  position: relative; z-index: 1;
-  max-width: 640px; text-align: center;
+  padding: 80px 24px 60px;
 }
 
-/* Logo area — drop image into /static/logos/ and swap the placeholder div */
-.bar-logo-area { margin-bottom: 30px; }
+/* ── Bar toggle — the only shared UI ── */
+.bar-toggle-wrap {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 52px;
+}
+.bar-tab {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .8rem; letter-spacing: .2em; text-transform: uppercase;
+  background: transparent; border: 1.5px solid var(--border);
+  color: var(--muted); padding: 10px 26px; cursor: pointer;
+  border-radius: 2px; transition: border-color .25s, color .25s;
+}
+.bar-tab.active { border-color: var(--accent); color: var(--accent); }
+.bar-tab:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+.toggle-divider { color: var(--accent); opacity: .35; font-size: .9rem; }
+
+/* ── Bar content block ── */
+.bar-content { text-align: center; max-width: 600px; width: 100%; }
+
+/* Logo area — drop image into /static/logos/ and swap the placeholder */
+.bar-logo-area { margin-bottom: 28px; }
 .logo-placeholder {
   display: inline-block;
   border: 2px solid var(--accent);
@@ -106,21 +108,26 @@ body.home-page { background: #050505; color: #f0ebe3; }
   object-fit: contain; display: block; margin: 0 auto;
 }
 
-.bar-section-name {
+.bar-name {
   font-family: 'Bebas Neue', cursive;
   font-size: clamp(3rem, 8vw, 5.5rem);
   letter-spacing: .04em; color: var(--text); line-height: 1;
   margin-bottom: 12px;
 }
-.bar-section-tagline {
+.bar-tagline {
   font-style: italic; font-size: 1.08rem;
-  color: var(--muted); margin-bottom: 36px;
+  color: var(--muted); margin-bottom: 16px;
+}
+.bar-about {
+  font-size: .93rem; line-height: 1.75;
+  color: var(--muted); margin-bottom: 30px;
+  max-width: 480px; margin-left: auto; margin-right: auto;
 }
 
 .bar-hours {
-  display: inline-block; margin-bottom: 40px;
+  display: inline-block; margin-bottom: 36px;
   border: 1px solid var(--border); border-radius: 4px;
-  padding: 20px 32px; font-size: .87rem; line-height: 2;
+  padding: 18px 30px; font-size: .87rem; line-height: 2;
   color: var(--muted); text-align: left;
 }
 .bar-hours-label {
@@ -129,7 +136,8 @@ body.home-page { background: #050505; color: #f0ebe3; }
   color: var(--text); display: block; margin-bottom: 4px;
 }
 
-.view-menu-btn {
+/* Menu button — links to this bar's dedicated menu page */
+.menu-btn {
   display: inline-block;
   background: var(--accent); color: #080808;
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
@@ -137,22 +145,7 @@ body.home-page { background: #050505; color: #f0ebe3; }
   padding: 13px 36px; border-radius: 3px; text-decoration: none;
   transition: background .2s, transform .15s;
 }
-.view-menu-btn:hover { background: var(--accent2); transform: translateY(-2px); }
-
-/* Home footer */
-.site-footer {
-  background: #030303; border-top: 1px solid #111;
-  padding: 40px 24px; text-align: center;
-}
-.footer-wordmark {
-  font-family: 'Bebas Neue', cursive; font-size: 1.5rem;
-  letter-spacing: .1em; color: #2a2a2a; margin-bottom: 8px;
-}
-.footer-bars {
-  font-family: 'Barlow Condensed', sans-serif; font-size: .78rem;
-  letter-spacing: .14em; text-transform: uppercase; color: #2a2a2a; margin-bottom: 10px;
-}
-.footer-copy { font-size: .73rem; color: #1e1e1e; }
+.menu-btn:hover { background: var(--accent2); transform: translateY(-2px); }
 
 /* ══════════════════════════════════════════════════════════════════════════
    MENU PAGES  (body.alibi-theme or body.ogden-theme)
