@@ -33,16 +33,16 @@ def load_accounts():
 def save_accounts(accounts):
     save_json('accounts.json', accounts)
 
-def authenticate(password):
+def authenticate(username, password):
     """Return (role, username, permissions).
-    Admin: ('admin', 'admin', None)  — None means bypass all permission checks.
+    Admin: ('admin', ADMIN_USER, None)  — None means bypass all permission checks.
     Manager: ('manager', username, [...])
     Failure: (None, None, None)
     """
-    if password == ADMIN_PASSWORD:
+    if username == ADMIN_USER and password == ADMIN_PASSWORD:
         return 'admin', ADMIN_USER, None
     for acct in load_accounts():
-        if check_password_hash(acct['password_hash'], password):
+        if acct['username'] == username and check_password_hash(acct['password_hash'], password):
             perms = acct.get('permissions', ['specials', 'menu'])
             return 'manager', acct['username'], perms
     return None, None, None
@@ -51,6 +51,7 @@ def default_menus():
     return {
         "alibi": {
             "special": {"title": "", "description": "", "price": "", "updated": ""},
+            "events": [],
             "menu": {
                 "Appetizers": [
                     {"name": "Homemade Fries", "description": "", "price": "3.75"},
@@ -123,6 +124,7 @@ def default_menus():
         },
         "ogden": {
             "special": {"title": "", "description": "", "price": "", "updated": ""},
+            "events": [],
             "menu": {
                 "Appetizers & More": [
                     {"name": "Wisconsin White Cheese Curds", "description": "6oz, Tossed in Buffalo Sauce, Topped with Buttermilk Ranch and Bleu Cheese", "price": "9"},
@@ -254,10 +256,21 @@ def set_menu(bar):
     save_bar_data(data)
     return jsonify({'success': True})
 
+@app.route('/api/bars/<bar>/events', methods=['POST'])
+def set_events(bar):
+    if not session.get('manager'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    if bar not in ('ogden', 'alibi'):
+        return jsonify({'error': 'Unknown bar'}), 404
+    data = load_bar_data()
+    data[bar]['events'] = request.json.get('events', [])
+    save_bar_data(data)
+    return jsonify({'success': True})
+
 @app.route('/api/login', methods=['POST'])
 def login():
     body = request.json or {}
-    role, username, permissions = authenticate(body.get('password', ''))
+    role, username, permissions = authenticate(body.get('username', ''), body.get('password', ''))
     if role:
         session['manager']     = True
         session['role']        = role

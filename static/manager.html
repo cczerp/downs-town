@@ -18,6 +18,13 @@
     <div id="loginView">
       <div class="manager-title">Manager Login</div>
       <input
+        type="text"
+        class="manager-input"
+        id="mgrUsername"
+        placeholder="Username"
+        autocomplete="username"
+      />
+      <input
         type="password"
         class="manager-input"
         id="mgrPassword"
@@ -55,6 +62,18 @@
         <button class="manager-btn manager-btn-secondary" id="addCategoryBtn">+ Add Category</button>
         <button class="manager-btn" id="saveMenuBtn">Save Menu</button>
         <div class="mgr-feedback" id="menuFeedback"></div>
+      </div>
+
+      <!-- Events editor -->
+      <div class="mgr-section" id="eventsSection">
+        <div class="mgr-section-label">Events &amp; Announcements</div>
+        <div id="eventsList"></div>
+        <input type="text" class="manager-input" id="newEventTitle" placeholder="Event title" />
+        <input type="text" class="manager-input" id="newEventDate"  placeholder="Date (e.g. Sat Jan 18)" />
+        <input type="text" class="manager-input" id="newEventDesc"  placeholder="Details (optional)" />
+        <button class="manager-btn manager-btn-secondary" id="addEventBtn">+ Add Event</button>
+        <button class="manager-btn" id="saveEventsBtn">Save Events</button>
+        <div class="mgr-feedback" id="eventsFeedback"></div>
       </div>
 
       <!-- Account management — visible to admin only -->
