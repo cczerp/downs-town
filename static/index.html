@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Down-Town | Alibi Bar &amp; The Ogden Club | Marinette &amp; Menominee</title>
-  <meta name="description" content="Down-Town — two great bars in the twin ports. Alibi Bar &amp; Grill in Marinette, WI (715-732-9809) and The Ogden Club in Menominee, MI (906-424-4141)." />
+  <meta name="description" content="Down-Town — two great bars in the twin ports. Alibi Bar &amp; Grill in Marinette, WI (715-732-9569) and The Ogden Club in Menominee, MI (906-424-4141)." />
   <meta property="og:title"       content="Down-Town | Alibi &amp; The Ogden Club" />
   <meta property="og:description" content="Two great bars in the twin ports — Alibi Bar &amp; Grill in Marinette, WI and The Ogden Club in Menominee, MI." />
   <meta property="og:type"        content="website" />
@@ -34,54 +34,67 @@
     <!-- ══ ALIBI ══ -->
     <div class="bar-content" id="alibiContent">
 
+      <!-- Logo + name + tagline — always centered above the 3-col layout -->
       <div class="bar-logo-area">
         <img src="/static/logos/alibi-logo.png" alt="Alibi" class="logo-img"
              onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
         <div class="logo-placeholder" style="display:none">Alibi</div>
       </div>
-
       <h1 class="bar-name">Alibi</h1>
       <p class="bar-tagline">Where regulars become family</p>
 
-      <!-- Daily special — always visible -->
-      <div class="home-special" id="alibiSpecial">
-        <div class="home-special-label">Today's Special</div>
-        <div class="home-special-body">
-          <div>
-            <div class="home-special-title" id="alibiSpecialTitle">Check Back Soon</div>
-            <div class="home-special-desc"  id="alibiSpecialDesc">Today's special hasn't been posted yet.</div>
+      <!-- 3-column layout -->
+      <div class="bar-columns">
+
+        <!-- LEFT: Daily Special -->
+        <div class="bar-col-side">
+          <div class="home-special" id="alibiSpecial">
+            <div class="home-special-label">Today's Special</div>
+            <div class="home-special-body">
+              <div>
+                <div class="home-special-title" id="alibiSpecialTitle">Check Back Soon</div>
+                <div class="home-special-desc"  id="alibiSpecialDesc">Today's special hasn't been posted yet.</div>
+              </div>
+              <div class="home-special-price" id="alibiSpecialPrice"></div>
+            </div>
           </div>
-          <div class="home-special-price" id="alibiSpecialPrice"></div>
         </div>
-      </div>
 
-      <!-- Events — always visible -->
-      <div class="home-events" id="alibiEvents">
-        <div class="home-events-label">Events &amp; Announcements</div>
-        <div class="home-events-list" id="alibiEventsList">
-          <div class="home-event-card"><div class="home-event-top"><span class="home-event-title">Check Back Soon</span></div><div class="home-event-desc">No upcoming events posted yet — check back soon!</div></div>
+        <!-- CENTER: About, hours, contact, menu button -->
+        <div class="bar-col-main">
+          <p class="bar-about">
+            A lively sports bar with scratch kitchen food, ice-cold drafts,
+            and no bad seats in the house.
+          </p>
+          <div class="bar-hours">
+            <span class="bar-hours-label">Hours</span>
+            Mon &ndash; Thu &nbsp;&nbsp; 3pm &ndash; 1am<br>
+            Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
+            Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 11pm
+          </div>
+          <div class="bar-contact">
+            <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener" class="bar-address-link">829 Main St, Marinette, WI</a>
+            <span class="bar-contact-sep">&middot;</span>
+            <a href="tel:7157329569" class="bar-phone-link">715-732-9569</a>
+          </div>
+          <a href="/alibi/menu" class="menu-btn">Menu &rarr;</a>
         </div>
-      </div>
 
-      <p class="bar-about">
-        A lively sports bar with scratch kitchen food, ice-cold drafts,
-        and no bad seats in the house.
-      </p>
+        <!-- RIGHT: Events & Announcements -->
+        <div class="bar-col-side">
+          <div class="home-events" id="alibiEvents">
+            <div class="home-events-label">Events &amp; Announcements</div>
+            <div class="home-events-list" id="alibiEventsList">
+              <div class="home-event-card">
+                <div class="home-event-top"><span class="home-event-title">Check Back Soon</span></div>
+                <div class="home-event-desc">No upcoming events posted yet — check back soon!</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div class="bar-hours">
-        <span class="bar-hours-label">Hours</span>
-        Mon &ndash; Thu &nbsp;&nbsp; 3pm &ndash; 1am<br>
-        Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
-        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 11pm
-      </div>
-      <div class="bar-contact">
-        <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener" class="bar-address-link">829 Main St, Marinette, WI</a>
-        <span class="bar-contact-sep">&middot;</span>
-        <a href="tel:7157329569" class="bar-phone-link">715-732-9569</a>
-      </div>
-
-      <a href="/alibi/menu" class="menu-btn">Menu &rarr;</a>
-    </div>
+      </div><!-- /bar-columns -->
+    </div><!-- /alibiContent -->
 
     <!-- ══ OGDEN CLUB ══ -->
     <div class="bar-content" id="ogdenContent" style="display:none">
@@ -91,49 +104,57 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
         <div class="logo-placeholder" style="display:none">The Ogden Club</div>
       </div>
-
       <h1 class="bar-name">The Ogden Club</h1>
       <p class="bar-tagline">Your neighborhood's home base</p>
 
-      <!-- Daily special — always visible -->
-      <div class="home-special" id="ogdenSpecial">
-        <div class="home-special-label">Today's Special</div>
-        <div class="home-special-body">
-          <div>
-            <div class="home-special-title" id="ogdenSpecialTitle">Check Back Soon</div>
-            <div class="home-special-desc"  id="ogdenSpecialDesc">Today's special hasn't been posted yet.</div>
+      <div class="bar-columns">
+
+        <div class="bar-col-side">
+          <div class="home-special" id="ogdenSpecial">
+            <div class="home-special-label">Today's Special</div>
+            <div class="home-special-body">
+              <div>
+                <div class="home-special-title" id="ogdenSpecialTitle">Check Back Soon</div>
+                <div class="home-special-desc"  id="ogdenSpecialDesc">Today's special hasn't been posted yet.</div>
+              </div>
+              <div class="home-special-price" id="ogdenSpecialPrice"></div>
+            </div>
           </div>
-          <div class="home-special-price" id="ogdenSpecialPrice"></div>
         </div>
-      </div>
 
-      <!-- Events — always visible -->
-      <div class="home-events" id="ogdenEvents">
-        <div class="home-events-label">Events &amp; Announcements</div>
-        <div class="home-events-list" id="ogdenEventsList">
-          <div class="home-event-card"><div class="home-event-top"><span class="home-event-title">Check Back Soon</span></div><div class="home-event-desc">No upcoming events posted yet — check back soon!</div></div>
+        <div class="bar-col-main">
+          <p class="bar-about">
+            A cornerstone of the neighborhood. Cold beer, great food, and the kind
+            of crowd that makes every game day feel like a party.
+          </p>
+          <div class="bar-hours">
+            <span class="bar-hours-label">Hours</span>
+            Mon &ndash; Thu &nbsp;&nbsp; 11am &ndash; 12am<br>
+            Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
+            Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 10pm
+          </div>
+          <div class="bar-contact">
+            <a href="https://maps.google.com/?q=414+10th+Ave+Menominee+MI+49858" target="_blank" rel="noopener" class="bar-address-link">414 10th Ave, Menominee, MI</a>
+            <span class="bar-contact-sep">&middot;</span>
+            <a href="tel:9064244141" class="bar-phone-link">906-424-4141</a>
+          </div>
+          <a href="/ogden/menu" class="menu-btn">Menu &rarr;</a>
         </div>
-      </div>
 
-      <p class="bar-about">
-        A cornerstone of the neighborhood. Cold beer, great food, and the kind
-        of crowd that makes every game day feel like a party.
-      </p>
+        <div class="bar-col-side">
+          <div class="home-events" id="ogdenEvents">
+            <div class="home-events-label">Events &amp; Announcements</div>
+            <div class="home-events-list" id="ogdenEventsList">
+              <div class="home-event-card">
+                <div class="home-event-top"><span class="home-event-title">Check Back Soon</span></div>
+                <div class="home-event-desc">No upcoming events posted yet — check back soon!</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div class="bar-hours">
-        <span class="bar-hours-label">Hours</span>
-        Mon &ndash; Thu &nbsp;&nbsp; 11am &ndash; 12am<br>
-        Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
-        Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 10pm
-      </div>
-      <div class="bar-contact">
-        <a href="https://maps.google.com/?q=414+10th+Ave+Menominee+MI+49858" target="_blank" rel="noopener" class="bar-address-link">414 10th Ave, Menominee, MI</a>
-        <span class="bar-contact-sep">&middot;</span>
-        <a href="tel:9064244141" class="bar-phone-link">906-424-4141</a>
-      </div>
-
-      <a href="/ogden/menu" class="menu-btn">Menu &rarr;</a>
-    </div>
+      </div><!-- /bar-columns -->
+    </div><!-- /ogdenContent -->
 
   </div><!-- /home-stage -->
 
