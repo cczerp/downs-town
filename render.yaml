@@ -1,5 +1,5 @@
 # render.yaml — Deploy Downtown to Render
-# https://render.com/docs/infrastructure-as-code
+# Persistent disk requires the Starter plan ($7/mo) — upgrade in the Render dashboard.
 
 services:
   - type: web
@@ -7,12 +7,14 @@ services:
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 app:app
-    plan: free
+    plan: starter
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: MANAGER_PASSWORD
-        value: downtown2026   # ← change this before deploying!
+      - key: ADMIN_USER
+        value: admin          # change to whatever username you want
+      - key: ADMIN_PASS
+        value: downtown2026   # change this before deploying!
     disk:
       name: bar-data
       mountPath: /data
