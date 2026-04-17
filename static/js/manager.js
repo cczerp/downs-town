@@ -2,8 +2,8 @@
 
 const $ = id => document.getElementById(id);
 
-let barData = null;
-let mgrBar  = 'ogden';
+let barData  = null;
+let mgrBar   = 'ogden';
 let userRole = 'manager';
 
 // ── Boot ───────────────────────────────────────────────────────────────
@@ -14,7 +14,7 @@ async function init() {
     if (data.authenticated) {
       userRole = data.role;
       await loadBarData();
-      showPanel(data.role, data.username);
+      showPanel(data.role, data.username, data.permissions);
     }
   } catch { /* start at login */ }
 }
@@ -40,7 +40,7 @@ $('loginBtn').addEventListener('click', async () => {
     if (data.success) {
       userRole = data.role;
       await loadBarData();
-      showPanel(data.role, data.username);
+      showPanel(data.role, data.username, data.permissions);
     } else {
       $('loginError').textContent = 'Invalid password.';
     }
@@ -53,7 +53,7 @@ $('mgrPassword').addEventListener('keydown', e => {
   if (e.key === 'Enter') $('loginBtn').click();
 });
 
-function showPanel(role, username) {
+function showPanel(role, username, permissions) {
   $('loginView').style.display    = 'none';
   $('managerPanel').style.display = '';
 
@@ -65,8 +65,15 @@ function showPanel(role, username) {
     $('panelTitle').textContent = `Manager Panel${username ? ' — ' + username : ''}`;
   }
 
-  syncSpecial();
-  renderMenuEditor();
+  // permissions === null means admin (full access); array means check it
+  const canSpecials = (role === 'admin') || !permissions || permissions.includes('specials');
+  const canMenu     = (role === 'admin') || !permissions || permissions.includes('menu');
+
+  $('specialSection').style.display = canSpecials ? '' : 'none';
+  $('menuSection').style.display    = canMenu     ? '' : 'none';
+
+  if (canSpecials) syncSpecial();
+  if (canMenu)     renderMenuEditor();
 }
 
 // ── Bar tabs ───────────────────────────────────────────────────────────
@@ -75,8 +82,8 @@ document.querySelectorAll('.mgr-tab').forEach(tab => {
     mgrBar = tab.dataset.mgrBar;
     document.querySelectorAll('.mgr-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    syncSpecial();
-    renderMenuEditor();
+    if ($('specialSection').style.display !== 'none') syncSpecial();
+    if ($('menuSection').style.display    !== 'none') renderMenuEditor();
   });
 });
 
@@ -238,13 +245,15 @@ function renderAccounts(accounts) {
   const list = $('accountList');
   list.innerHTML = '';
 
-  // Always show the admin entry (can't be deleted)
+  // Admin entry — always shown, cannot be deleted
   const adminRow = document.createElement('div');
   adminRow.className = 'account-list-item';
   adminRow.innerHTML = '<span class="account-username is-admin">admin (env var)</span>';
   list.appendChild(adminRow);
 
-  accounts.forEach(({ username }) => {
+  accounts.forEach(({ username, permissions }) => {
+    let perms = permissions || ['specials', 'menu'];
+
     const row       = document.createElement('div');
     row.className   = 'account-list-item';
 
@@ -252,12 +261,45 @@ function renderAccounts(accounts) {
     nameEl.className    = 'account-username';
     nameEl.textContent  = username;
 
+    // Permission toggles
+    const permWrap      = document.createElement('div');
+    permWrap.className  = 'account-perm-wrap';
+
+    ['specials', 'menu'].forEach(perm => {
+      const btn       = document.createElement('button');
+      btn.className   = 'perm-toggle' + (perms.includes(perm) ? ' active' : '');
+      btn.textContent = perm.charAt(0).toUpperCase() + perm.slice(1);
+
+      btn.addEventListener('click', async () => {
+        const wasActive = btn.classList.contains('active');
+        const newPerms  = wasActive
+          ? perms.filter(p => p !== perm)
+          : [...perms, perm];
+        try {
+          const res = await fetch(`/api/accounts/${encodeURIComponent(username)}/permissions`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ permissions: newPerms })
+          });
+          if ((await res.json()).success) {
+            perms = newPerms;
+            btn.classList.toggle('active', !wasActive);
+          }
+        } catch {
+          flash('accountFeedback', 'Error updating permissions.');
+        }
+      });
+
+      permWrap.appendChild(btn);
+    });
+
     const delBtn        = document.createElement('button');
     delBtn.className    = 'account-delete';
     delBtn.textContent  = 'Remove';
     delBtn.addEventListener('click', () => deleteAccount(username, row));
 
     row.appendChild(nameEl);
+    row.appendChild(permWrap);
     row.appendChild(delBtn);
     list.appendChild(row);
   });
@@ -302,10 +344,10 @@ $('createAccountBtn').addEventListener('click', async () => {
 // ── Logout ─────────────────────────────────────────────────────────────
 $('logoutBtn').addEventListener('click', async () => {
   await fetch('/api/logout', { method: 'POST' });
-  $('managerPanel').style.display  = 'none';
-  $('accountsSection').style.display = 'none';
-  $('loginView').style.display     = '';
-  $('mgrPassword').value           = '';
+  $('managerPanel').style.display     = 'none';
+  $('accountsSection').style.display  = 'none';
+  $('loginView').style.display        = '';
+  $('mgrPassword').value              = '';
 });
 
 // ── Utility ────────────────────────────────────────────────────────────
