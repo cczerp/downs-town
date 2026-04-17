@@ -461,7 +461,7 @@ body.manager-page {
 .account-create-row {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
 }
-.account-perm-wrap { display: flex; gap: 5px; }
+
 .perm-toggle {
   background: transparent; border: 1px solid #282828; color: #555;
   font-family: 'Barlow Condensed', sans-serif; font-size: .7rem;
@@ -470,6 +470,12 @@ body.manager-page {
 }
 .perm-toggle.active  { border-color: #5a9a5c; color: #5a9a5c; }
 .perm-toggle:hover:not(.active) { border-color: #3a3a3a; color: #aaa; }
+.pw-reset-input {
+  background: #0e0e0e; border: 1px solid #3a3a3a; border-radius: 2px;
+  color: #d8d8d8; padding: 3px 7px; font-size: .78rem; width: 110px; outline: none;
+}
+.pw-reset-input:focus { border-color: #5a9a5c; }
+.account-perm-wrap { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
 
 /* Events section on home page */
 .bar-events { width: 100%; max-width: 500px; margin-top: 32px; text-align: left; }

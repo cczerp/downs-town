@@ -366,6 +366,45 @@ function renderAccounts(accounts) {
       permWrap.appendChild(btn);
     });
 
+    // Reset password button — expands inline
+    const resetBtn       = document.createElement('button');
+    resetBtn.className   = 'perm-toggle';
+    resetBtn.textContent = 'Reset PW';
+    resetBtn.addEventListener('click', () => {
+      if (row.querySelector('.pw-reset-input')) return; // already open
+
+      const pwIn     = document.createElement('input');
+      pwIn.type      = 'password';
+      pwIn.className = 'pw-reset-input';
+      pwIn.placeholder = 'New password';
+
+      const setBtn       = document.createElement('button');
+      setBtn.className   = 'perm-toggle active';
+      setBtn.textContent = 'Set';
+      setBtn.addEventListener('click', async () => {
+        const newPw = pwIn.value;
+        if (!newPw) return;
+        try {
+          const res = await fetch(`/api/accounts/${encodeURIComponent(username)}/password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: newPw })
+          });
+          if ((await res.json()).success) {
+            flash('accountFeedback', `Password reset for "${username}".`);
+            pwIn.remove(); setBtn.remove();
+          }
+        } catch {
+          flash('accountFeedback', 'Error resetting password.');
+        }
+      });
+
+      permWrap.appendChild(pwIn);
+      permWrap.appendChild(setBtn);
+      pwIn.focus();
+    });
+    permWrap.appendChild(resetBtn);
+
     const delBtn        = document.createElement('button');
     delBtn.className    = 'account-delete';
     delBtn.textContent  = 'Remove';
