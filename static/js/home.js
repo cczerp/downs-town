@@ -19,31 +19,40 @@ document.querySelectorAll('.bar-tab').forEach(btn => {
   btn.addEventListener('click', () => switchBar(btn.dataset.bar));
 });
 
-function renderEvents(bar, events) {
-  const el = document.getElementById(bar + 'Events');
-  if (!el) return;
-  if (!events || !events.length) { el.style.display = 'none'; return; }
-  el.style.display = '';
-  el.innerHTML =
-    '<div class="events-label">Events &amp; Announcements</div>' +
-    events.map(e => `
-      <div class="event-card">
-        <div class="event-top">
-          <span class="event-title">${esc(e.title)}</span>
-          ${e.date ? `<span class="event-date">${esc(e.date)}</span>` : ''}
-        </div>
-        ${e.description ? `<div class="event-desc">${esc(e.description)}</div>` : ''}
-      </div>`
-    ).join('');
+function renderSpecial(bar, special) {
+  const wrap  = document.getElementById(bar + 'Special');
+  if (!special || !special.title) { wrap.style.display = 'none'; return; }
+  document.getElementById(bar + 'SpecialTitle').textContent = special.title;
+  document.getElementById(bar + 'SpecialDesc').textContent  = special.description || '';
+  document.getElementById(bar + 'SpecialPrice').textContent = special.price ? '$' + special.price : '';
+  wrap.style.display = '';
 }
 
-async function loadEvents() {
+function renderEvents(bar, events) {
+  const wrap = document.getElementById(bar + 'Events');
+  const list = document.getElementById(bar + 'EventsList');
+  if (!events || !events.length) { wrap.style.display = 'none'; return; }
+  list.innerHTML = events.map(e => `
+    <div class="home-event-card">
+      <div class="home-event-top">
+        <span class="home-event-title">${esc(e.title)}</span>
+        ${e.date ? `<span class="home-event-date">${esc(e.date)}</span>` : ''}
+      </div>
+      ${e.description ? `<div class="home-event-desc">${esc(e.description)}</div>` : ''}
+    </div>`
+  ).join('');
+  wrap.style.display = '';
+}
+
+async function loadBarInfo() {
   try {
     const res  = await fetch('/api/bars');
     const data = await res.json();
-    renderEvents('alibi', data.alibi.events);
-    renderEvents('ogden', data.ogden.events);
-  } catch { /* non-critical — events just won't show */ }
+    renderSpecial('alibi', data.alibi.special);
+    renderSpecial('ogden', data.ogden.special);
+    renderEvents('alibi',  data.alibi.events);
+    renderEvents('ogden',  data.ogden.events);
+  } catch { /* non-critical */ }
 }
 
-loadEvents();
+loadBarInfo();

@@ -3,21 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Down-Town</title>
+  <title>Down-Town | Alibi Bar &amp; The Ogden Club | Marinette &amp; Menominee</title>
+  <meta name="description" content="Down-Town — two great bars in the twin ports. Alibi Bar &amp; Grill in Marinette, WI (715-732-9809) and The Ogden Club in Menominee, MI (906-424-4141)." />
+  <meta property="og:title"       content="Down-Town | Alibi &amp; The Ogden Club" />
+  <meta property="og:description" content="Two great bars in the twin ports — Alibi Bar &amp; Grill in Marinette, WI and The Ogden Club in Menominee, MI." />
+  <meta property="og:type"        content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 
-<!--
-  Default bar is Alibi. home.js switches the body class and swaps visible content.
-  To change the default to Ogden, change "alibi-theme" → "ogden-theme" below
-  and flip the style="display:none" between the two bar-content divs.
--->
 <body class="alibi-theme">
 
-  <!-- Topbar: wordmark only — color responds to active theme -->
   <header class="home-topbar">
     <div class="home-topbar-inner">
       <span class="home-wordmark">Down-Town</span>
@@ -26,16 +24,14 @@
 
   <div class="home-stage">
 
-    <!-- ── TOGGLE — the only persistent element ── -->
+    <!-- ── TOGGLE ── -->
     <div class="bar-toggle-wrap">
       <button class="bar-tab active" data-bar="alibi">Alibi</button>
       <span class="toggle-divider">⬡</span>
       <button class="bar-tab" data-bar="ogden">The Ogden Club</button>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         ALIBI  (shown by default)
-    ══════════════════════════════════════════ -->
+    <!-- ══ ALIBI ══ -->
     <div class="bar-content" id="alibiContent">
 
       <div class="bar-logo-area">
@@ -46,6 +42,25 @@
 
       <h1 class="bar-name">Alibi</h1>
       <p class="bar-tagline">Where regulars become family</p>
+
+      <!-- Daily special — shown when set -->
+      <div class="home-special" id="alibiSpecial" style="display:none">
+        <div class="home-special-label">Today's Special</div>
+        <div class="home-special-body">
+          <div>
+            <div class="home-special-title" id="alibiSpecialTitle"></div>
+            <div class="home-special-desc"  id="alibiSpecialDesc"></div>
+          </div>
+          <div class="home-special-price" id="alibiSpecialPrice"></div>
+        </div>
+      </div>
+
+      <!-- Events — shown when posted -->
+      <div class="home-events" id="alibiEvents" style="display:none">
+        <div class="home-events-label">Events &amp; Announcements</div>
+        <div class="home-events-list" id="alibiEventsList"></div>
+      </div>
+
       <p class="bar-about">
         A lively sports bar with scratch kitchen food, ice-cold drafts,
         and no bad seats in the house.
@@ -57,14 +72,16 @@
         Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
         Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 11pm
       </div>
+      <div class="bar-contact">
+        <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener" class="bar-address-link">829 Main St, Marinette, WI</a>
+        <span class="bar-contact-sep">&middot;</span>
+        <a href="tel:7157329809" class="bar-phone-link">715-732-9809</a>
+      </div>
 
       <a href="/alibi/menu" class="menu-btn">Menu &rarr;</a>
-      <div class="bar-events" id="alibiEvents" style="display:none"></div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         THE OGDEN CLUB  (hidden until toggled)
-    ══════════════════════════════════════════ -->
+    <!-- ══ OGDEN CLUB ══ -->
     <div class="bar-content" id="ogdenContent" style="display:none">
 
       <div class="bar-logo-area">
@@ -75,6 +92,25 @@
 
       <h1 class="bar-name">The Ogden Club</h1>
       <p class="bar-tagline">Your neighborhood's home base</p>
+
+      <!-- Daily special — shown when set -->
+      <div class="home-special" id="ogdenSpecial" style="display:none">
+        <div class="home-special-label">Today's Special</div>
+        <div class="home-special-body">
+          <div>
+            <div class="home-special-title" id="ogdenSpecialTitle"></div>
+            <div class="home-special-desc"  id="ogdenSpecialDesc"></div>
+          </div>
+          <div class="home-special-price" id="ogdenSpecialPrice"></div>
+        </div>
+      </div>
+
+      <!-- Events — shown when posted -->
+      <div class="home-events" id="ogdenEvents" style="display:none">
+        <div class="home-events-label">Events &amp; Announcements</div>
+        <div class="home-events-list" id="ogdenEventsList"></div>
+      </div>
+
       <p class="bar-about">
         A cornerstone of the neighborhood. Cold beer, great food, and the kind
         of crowd that makes every game day feel like a party.
@@ -86,9 +122,13 @@
         Fri &ndash; Sat &nbsp;&nbsp;&nbsp;&nbsp; 11am &ndash; 2am<br>
         Sun &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12pm &ndash; 10pm
       </div>
+      <div class="bar-contact">
+        <a href="https://maps.google.com/?q=414+10th+Ave+Menominee+MI+49858" target="_blank" rel="noopener" class="bar-address-link">414 10th Ave, Menominee, MI</a>
+        <span class="bar-contact-sep">&middot;</span>
+        <a href="tel:9064244141" class="bar-phone-link">906-424-4141</a>
+      </div>
 
       <a href="/ogden/menu" class="menu-btn">Menu &rarr;</a>
-      <div class="bar-events" id="ogdenEvents" style="display:none"></div>
     </div>
 
   </div><!-- /home-stage -->

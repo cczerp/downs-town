@@ -5,10 +5,30 @@ import json, os, datetime
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY', 'downtown-bars-2026')
 
-DATA_DIR = '/data'
+# Try /data (Render persistent disk); fall back to ./data/ for local dev
+def _resolve_data_dir():
+    candidate = os.environ.get('DATA_DIR', '/data')
+    try:
+        os.makedirs(candidate, exist_ok=True)
+        test = os.path.join(candidate, '.write_test')
+        with open(test, 'w') as f:
+            f.write('ok')
+        os.remove(test)
+        return candidate
+    except OSError:
+        fallback = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+        os.makedirs(fallback, exist_ok=True)
+        return fallback
+
+DATA_DIR = _resolve_data_dir()
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASS', 'downtown2026')
 ADMIN_USER     = os.environ.get('ADMIN_USER', 'admin')
+
+# Return JSON for any unhandled 500 so clients don't get an HTML parse error
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return jsonify({'error': str(e)}), 500
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -72,16 +92,16 @@ def default_menus():
                     {"name": "Cheeseburger*", "description": "", "price": "5.95"},
                     {"name": "Grilled Cheeseburger*", "description": "", "price": "6.95"},
                     {"name": "Linda's Mushroom Swiss*", "description": "", "price": "7.45"},
-                    {"name": "Add Lettuce, Tomato or Fried Onion", "description": "", "price": "+.95"},
-                    {"name": "Add Bacon", "description": "", "price": "+1.95"},
-                    {"name": "Double Your Patty*", "description": "", "price": "+2.45"}
-                ],
-                "Specialty Burgers": [
                     {"name": "The Alibi Burger*", "description": "2 1/4lb Patties, 5 Onion Rings, 3 Pieces of Bacon, American, topped with BBQ Sauce", "price": "10.95"},
                     {"name": "AM/PM Burger*", "description": "1/4lb, Egg, Bacon & American Cheese, served on top of a Hashbrown", "price": "9.45"},
                     {"name": "Patty Melt*", "description": "1/4lb Burger, 2 Slices of Swiss Cheese and Fried Onions on Texas Toast", "price": "7.95"},
                     {"name": "Jalapeno Bacon Ranch*", "description": "2 1/4lb Patties, 3 Pieces of Bacon, Smothered with Ranch & topped with Jalapenos and Swiss Cheese", "price": "10.95"},
                     {"name": "Madness Burger*", "description": "2 1/4lb Patties topped with Fried Cheese Curds, Deep-Fried Pickles & American Cheese", "price": "9.95"}
+                ],
+                "Burger Add-Ons": [
+                    {"name": "Add Lettuce, Tomato or Fried Onion", "description": "", "price": "+.95"},
+                    {"name": "Add Bacon", "description": "", "price": "+1.95"},
+                    {"name": "Double Your Patty*", "description": "", "price": "+2.45"}
                 ],
                 "Tacos, Sammiches & More": [
                     {"name": "Homemade Taco", "description": "Taco Meat Contains Beans. Make it Supreme +.95", "price": "2.95"},

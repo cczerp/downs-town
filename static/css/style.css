@@ -50,12 +50,10 @@
 .ogden-theme .menu-item {
   border-bottom-color: rgba(0, 0, 0, .08);
 }
-.ogden-theme .special-banner {
-  background: #b03020;
-  color: #ffffff;
-}
-.ogden-theme .special-desc { color: rgba(255, 255, 255, .8); }
-.ogden-theme .menu-btn      { color: #ffffff; }
+.ogden-theme .special-banner  { background: #b03020; color: #ffffff; }
+.ogden-theme .special-desc    { color: rgba(255, 255, 255, .8); }
+.ogden-theme .menu-btn        { color: #ffffff; }
+.ogden-theme .home-special    { background: #b03020; }
 
 /* ── BASE ─────────────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
@@ -154,6 +152,18 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   color: var(--text); display: block; margin-bottom: 4px;
 }
 
+/* Address + phone line on home page */
+.bar-contact {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 28px; flex-wrap: wrap; justify-content: center;
+}
+.bar-address-link, .bar-phone-link {
+  font-size: .83rem; color: var(--muted); text-decoration: none;
+  transition: color .2s;
+}
+.bar-address-link:hover, .bar-phone-link:hover { color: var(--accent); }
+.bar-contact-sep { color: var(--border); font-size: .9rem; }
+
 /* Menu button — links to this bar's dedicated menu page */
 .menu-btn {
   display: inline-block;
@@ -189,6 +199,17 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   font-family: 'Bebas Neue', cursive; font-size: 1.4rem;
   letter-spacing: .08em; color: var(--accent);
 }
+
+/* Right side of topbar — call button + back link */
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-call {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+  background: var(--accent); color: #ffffff; text-decoration: none;
+  padding: 7px 14px; border-radius: 2px; transition: opacity .2s;
+  white-space: nowrap;
+}
+.topbar-call:hover { opacity: .85; }
 
 .topbar-back {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
@@ -247,6 +268,34 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 .cat-btn:hover,
 .cat-btn.active { border-color: var(--accent); color: var(--accent); }
 .cat-btn.active { background: rgba(255,255,255,.04); }
+
+/* Menu footer — call button + address at bottom of menu page */
+.menu-footer {
+  max-width: 1100px; margin: 0 auto; padding: 10px 24px 64px;
+  text-align: center;
+}
+.menu-footer-call {
+  display: inline-block;
+  background: var(--accent); color: #ffffff; text-decoration: none;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 1.1rem; letter-spacing: .14em; text-transform: uppercase;
+  padding: 15px 40px; border-radius: 3px; transition: opacity .2s;
+}
+.menu-footer-call:hover { opacity: .85; }
+.menu-footer-address {
+  margin-top: 12px; font-size: .85rem;
+}
+.menu-footer-address a {
+  color: var(--muted); text-decoration: none; transition: color .2s;
+}
+.menu-footer-address a:hover { color: var(--accent); }
+
+/* Make the hero address subtitle a link */
+a.menu-hero-sub {
+  display: block; text-decoration: none;
+  transition: opacity .2s;
+}
+a.menu-hero-sub:hover { opacity: .75; }
 
 /* Menu grid */
 .menu-section { max-width: 1100px; margin: 0 auto; padding: 20px 24px 80px; }
@@ -442,6 +491,51 @@ body.manager-page {
   color: var(--accent); letter-spacing: .06em; white-space: nowrap;
 }
 .event-desc  { font-size: .81rem; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+/* Home page — daily special card */
+.home-special {
+  width: 100%; max-width: 500px; margin-top: 28px;
+  background: var(--accent); border-radius: 4px; padding: 16px 20px;
+  text-align: left;
+}
+.home-special-label {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(255,255,255,.65); margin-bottom: 6px;
+}
+.home-special-body {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.home-special-title { font-weight: 700; font-size: 1.05rem; color: #fff; }
+.home-special-desc  { font-size: .84rem; color: rgba(255,255,255,.75); margin-top: 3px; }
+.home-special-price {
+  font-family: 'Bebas Neue', cursive; font-size: 2rem;
+  color: #fff; letter-spacing: .04em; white-space: nowrap;
+}
+
+/* Home page — events & announcements */
+.home-events {
+  width: 100%; max-width: 500px; margin-top: 18px; text-align: left;
+}
+.home-events-label {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px;
+}
+.home-event-card {
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px; margin-bottom: 8px;
+  background: var(--card); border-radius: 0 4px 4px 0;
+}
+.home-event-top {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+}
+.home-event-title { font-weight: 700; font-size: .95rem; color: var(--text); }
+.home-event-date  {
+  font-family: 'Barlow Condensed', sans-serif; font-size: .8rem;
+  color: var(--accent); letter-spacing: .06em; white-space: nowrap;
+}
+.home-event-desc  { font-size: .82rem; color: var(--muted); margin-top: 3px; line-height: 1.45; }
 
 /* Manager events list */
 .event-mgr-row {
