@@ -108,7 +108,19 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 .toggle-divider { color: var(--accent); opacity: .35; font-size: .9rem; }
 
 /* ── Bar content block ── */
-.bar-content { text-align: center; max-width: 600px; width: 100%; }
+.bar-content { text-align: center; max-width: 1200px; width: 100%; }
+
+/* 3-column layout: [Special] [About+Hours+Etc] [Events] */
+.bar-columns {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 28px;
+  width: 100%;
+  margin-top: 32px;
+  align-items: start;
+}
+.bar-col-main { text-align: center; }
+.bar-col-side  { text-align: left; }
 
 /* Logo area — drop image into /static/logos/ and swap the placeholder */
 .bar-logo-area { margin-bottom: 28px; }
@@ -137,7 +149,6 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 .bar-about {
   font-size: .93rem; line-height: 1.75;
   color: var(--muted); margin-bottom: 30px;
-  max-width: 480px; margin-left: auto; margin-right: auto;
 }
 
 .bar-hours {
@@ -500,7 +511,7 @@ body.manager-page {
 
 /* Home page — daily special card */
 .home-special {
-  width: 100%; max-width: 500px; margin-top: 28px;
+  width: 100%;
   background: var(--accent); border-radius: 4px; padding: 16px 20px;
   text-align: left;
 }
@@ -521,7 +532,7 @@ body.manager-page {
 
 /* Home page — events & announcements */
 .home-events {
-  width: 100%; max-width: 500px; margin-top: 18px; text-align: left;
+  width: 100%; text-align: left;
 }
 .home-events-label {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
@@ -563,8 +574,16 @@ body.manager-page {
 .staff-link:hover { opacity: 1; }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .bar-columns {
+    grid-template-columns: 1fr;
+  }
+  .bar-col-side { text-align: center; }
+  .home-special, .home-events { max-width: 500px; margin-left: auto; margin-right: auto; }
+}
 @media (max-width: 700px) {
   .bar-hours { padding: 16px 20px; }
+  .topbar-call { display: none; } /* hide call btn on very small screens — they can use footer */
   .mgr-item-row { grid-template-columns: 1fr auto auto; }
   .mgr-item-row .mgr-item-input:nth-child(2) { grid-column: 1 / 3; }
   .account-create-row { grid-template-columns: 1fr; }
