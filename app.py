@@ -7,10 +7,8 @@ app.secret_key = os.environ.get('SECRET_KEY', 'downtown-bars-2026')
 
 DATA_DIR = '/data'
 
-ADMIN_PASSWORD = (
-    os.environ.get('ADMIN_PASSWORD') or
-    os.environ.get('MANAGER_PASSWORD', 'downtown2026')
-)
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASS', 'downtown2026')
+ADMIN_USER     = os.environ.get('ADMIN_USER', 'admin')
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -42,7 +40,7 @@ def authenticate(password):
     Failure: (None, None, None)
     """
     if password == ADMIN_PASSWORD:
-        return 'admin', 'admin', None
+        return 'admin', ADMIN_USER, None
     for acct in load_accounts():
         if check_password_hash(acct['password_hash'], password):
             perms = acct.get('permissions', ['specials', 'menu'])
