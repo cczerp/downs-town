@@ -20,18 +20,18 @@ document.querySelectorAll('.bar-tab').forEach(btn => {
 });
 
 function renderSpecial(bar, special) {
-  const wrap  = document.getElementById(bar + 'Special');
-  if (!special || !special.title) { wrap.style.display = 'none'; return; }
-  document.getElementById(bar + 'SpecialTitle').textContent = special.title;
-  document.getElementById(bar + 'SpecialDesc').textContent  = special.description || '';
-  document.getElementById(bar + 'SpecialPrice').textContent = special.price ? '$' + special.price : '';
-  wrap.style.display = '';
+  const hasContent = special && special.title;
+  document.getElementById(bar + 'SpecialTitle').textContent = hasContent ? special.title         : 'Check Back Soon';
+  document.getElementById(bar + 'SpecialDesc').textContent  = hasContent ? (special.description || '') : "Today\u2019s special hasn\u2019t been posted yet.";
+  document.getElementById(bar + 'SpecialPrice').textContent = (hasContent && special.price) ? '$' + special.price : '';
 }
 
 function renderEvents(bar, events) {
-  const wrap = document.getElementById(bar + 'Events');
   const list = document.getElementById(bar + 'EventsList');
-  if (!events || !events.length) { wrap.style.display = 'none'; return; }
+  if (!events || !events.length) {
+    list.innerHTML = '<div class="home-event-card"><div class="home-event-top"><span class="home-event-title">Check Back Soon</span></div><div class="home-event-desc">No upcoming events posted yet \u2014 check back soon!</div></div>';
+    return;
+  }
   list.innerHTML = events.map(e => `
     <div class="home-event-card">
       <div class="home-event-top">
@@ -41,7 +41,6 @@ function renderEvents(bar, events) {
       ${e.description ? `<div class="home-event-desc">${esc(e.description)}</div>` : ''}
     </div>`
   ).join('');
-  wrap.style.display = '';
 }
 
 async function loadBarInfo() {
@@ -52,7 +51,7 @@ async function loadBarInfo() {
     renderSpecial('ogden', data.ogden.special);
     renderEvents('alibi',  data.alibi.events);
     renderEvents('ogden',  data.ogden.events);
-  } catch { /* non-critical */ }
+  } catch { /* defaults already showing in HTML */ }
 }
 
 loadBarInfo();

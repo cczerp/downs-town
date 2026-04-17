@@ -372,6 +372,26 @@ def update_permissions(username):
     save_accounts(accounts)
     return jsonify({'success': True, 'permissions': perms})
 
+@app.route('/api/accounts/<username>/password', methods=['PUT'])
+def reset_password(username):
+    if session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    body     = request.json or {}
+    new_pass = body.get('password', '')
+    if not new_pass:
+        return jsonify({'error': 'Password is required'}), 400
+    accounts = load_accounts()
+    updated  = False
+    for acct in accounts:
+        if acct['username'] == username:
+            acct['password_hash'] = generate_password_hash(new_pass)
+            updated = True
+            break
+    if not updated:
+        return jsonify({'error': 'Account not found'}), 404
+    save_accounts(accounts)
+    return jsonify({'success': True})
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
