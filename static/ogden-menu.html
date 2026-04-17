@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu — The Ogden Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="ogden-theme">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+
+      <!--
+        LOGO: Save ogden-logo.png to /static/logos/ then swap to:
+        <img src="/static/logos/ogden-logo.png" alt="The Ogden Club" class="topbar-logo-img">
+      -->
+      <div class="topbar-logo-area">
+        <span class="topbar-logo-text">The Ogden Club</span>
+      </div>
+
+      <a href="/#ogden" class="topbar-back">&larr; Down-Town</a>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Daily Special (hidden until a special is set) -->
+    <div class="special-banner" id="specialBanner" style="display:none">
+      <div class="special-banner-inner">
+        <span class="special-label">Today's Special</span>
+        <span class="special-title" id="specialTitle"></span>
+        <span class="special-desc"  id="specialDesc"></span>
+        <span class="special-price" id="specialPrice"></span>
+      </div>
+    </div>
+
+    <!-- Menu heading -->
+    <div class="menu-hero">
+      <div class="menu-hero-name">Menu</div>
+      <div class="menu-hero-sub">The Ogden Club &mdash; Menominee, MI</div>
+    </div>
+
+    <!-- Category filter buttons (All is hardcoded; rest added by JS) -->
+    <div class="category-filter" id="categoryFilter">
+      <button class="cat-btn active" data-cat="all">All</button>
+    </div>
+
+    <!-- Menu grid -->
+    <div class="menu-section">
+      <div class="menu-grid" id="menuGrid">
+        <div class="menu-loading">Loading menu&hellip;</div>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+
+  <script>const BAR = 'ogden';</script>
+  <script src="/static/js/menu.js"></script>
+</body>
+</html>

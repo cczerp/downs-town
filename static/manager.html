@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff — Down-Town</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="manager-page">
+
+  <div class="manager-box">
+    <div class="manager-site-label">Down-Town / Staff</div>
+
+    <!-- ── LOGIN VIEW ── -->
+    <div id="loginView">
+      <div class="manager-title">Manager Login</div>
+      <input
+        type="password"
+        class="manager-input"
+        id="mgrPassword"
+        placeholder="Password"
+        autocomplete="current-password"
+      />
+      <div class="manager-error" id="loginError"></div>
+      <button class="manager-btn" id="loginBtn">Sign In</button>
+    </div>
+
+    <!-- ── MANAGER PANEL (shown after login) ── -->
+    <div id="managerPanel" style="display:none">
+      <div class="manager-title">Manager Panel</div>
+
+      <!-- Bar selector -->
+      <div class="mgr-bar-tabs">
+        <button class="mgr-tab active" data-mgr-bar="ogden" id="mgrTabOgden">Ogden Club</button>
+        <button class="mgr-tab"        data-mgr-bar="alibi" id="mgrTabAlibi">Alibi</button>
+      </div>
+
+      <!-- Daily Special editor -->
+      <div class="mgr-section">
+        <div class="mgr-section-label">Daily Special</div>
+        <input type="text" class="manager-input" id="specialTitleInput" placeholder="Special name" />
+        <input type="text" class="manager-input" id="specialDescInput"  placeholder="Description" />
+        <input type="text" class="manager-input" id="specialPriceInput" placeholder="Price (e.g. 12.99)" />
+        <button class="manager-btn" id="saveSpecialBtn">Save Special</button>
+        <div class="mgr-feedback" id="specialFeedback"></div>
+      </div>
+
+      <!-- Menu editor
+           Each category shows all items with editable Name / Description / Price fields.
+           Delete any item with ✕. Add items with "+ Add item". Add categories below.
+           Hit Save Menu when done. -->
+      <div class="mgr-section">
+        <div class="mgr-section-label">Menu Items</div>
+        <div id="mgrMenuEditor"></div>
+        <button class="manager-btn manager-btn-secondary" id="addCategoryBtn">+ Add Category</button>
+        <button class="manager-btn" id="saveMenuBtn">Save Menu</button>
+        <div class="mgr-feedback" id="menuFeedback"></div>
+      </div>
+
+      <button class="manager-btn manager-btn-ghost" id="logoutBtn">Log Out</button>
+    </div>
+
+  </div><!-- /manager-box -->
+
+  <script src="/static/js/manager.js"></script>
+</body>
+</html>

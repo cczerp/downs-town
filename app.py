@@ -93,6 +93,18 @@ def save_bar_data(data):
 def index():
     return send_from_directory('static', 'index.html')
 
+@app.route('/alibi/menu')
+def alibi_menu_page():
+    return send_from_directory('static', 'alibi-menu.html')
+
+@app.route('/ogden/menu')
+def ogden_menu_page():
+    return send_from_directory('static', 'ogden-menu.html')
+
+@app.route('/manager')
+def manager_page():
+    return send_from_directory('static', 'manager.html')
+
 @app.route('/api/bars', methods=['GET'])
 def get_bars():
     return jsonify(load_bar_data())
