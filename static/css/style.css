@@ -168,12 +168,29 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 }
 
 .bar-hours {
-  font-size: .87rem; line-height: 2; color: var(--muted);
+  font-size: .87rem; color: var(--muted);
 }
 .bar-hours-label {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
   font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
-  color: var(--accent); display: block; margin-bottom: 6px;
+  color: var(--accent); display: block; margin-bottom: 10px;
+}
+.hours-body { display: flex; flex-direction: column; gap: 6px; }
+.hours-status {
+  display: inline-block; align-self: flex-start;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 4px;
+}
+.hours-status.is-open   { background: rgba(76,200,90,.12); color: #4cc85a; border: 1px solid rgba(76,200,90,.3); }
+.hours-status.is-closed { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid var(--border); }
+.hours-main {
+  font-family: 'Bebas Neue', cursive; font-size: 2rem;
+  letter-spacing: .04em; color: var(--text); line-height: 1;
+}
+.hours-sub {
+  font-size: .75rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .1em;
 }
 
 /* Below-grid row: contact + menu button */
