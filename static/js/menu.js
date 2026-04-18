@@ -73,12 +73,18 @@ function renderMenu(menu) {
   `).join('');
 }
 
+// Categories that appear alongside their parent when that filter is active
+const COMPANIONS = { 'Burgers': 'Burger Add-Ons' };
+
 function setFilter(activeCat) {
+  const companion = COMPANIONS[activeCat];
   document.querySelectorAll('.cat-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.cat === activeCat);
   });
   document.querySelectorAll('.menu-category').forEach(card => {
-    card.classList.toggle('hidden', activeCat !== 'all' && card.dataset.cat !== activeCat);
+    const cat  = card.dataset.cat;
+    const show = activeCat === 'all' || cat === activeCat || (companion && cat === companion);
+    card.classList.toggle('hidden', !show);
   });
 }
 
