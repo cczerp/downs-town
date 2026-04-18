@@ -53,7 +53,7 @@
 .ogden-theme .special-banner  { background: #b03020; color: #ffffff; }
 .ogden-theme .special-desc    { color: rgba(255, 255, 255, .8); }
 .ogden-theme .menu-btn        { color: #ffffff; }
-.ogden-theme .home-special    { background: #b03020; }
+/* ogden special card uses same card system — no override needed */
 
 /* ── BASE ─────────────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
@@ -110,20 +110,19 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 /* ── Bar content block ── */
 .bar-content { text-align: center; max-width: 1200px; width: 100%; }
 
-/* 3-column layout: [Special] [About+Hours+Etc] [Events] */
+/* 3-column layout: [Special] [Hours] [Events] — equal columns */
 .bar-columns {
   display: grid;
-  grid-template-columns: 260px 1fr 260px;
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
   width: 100%;
-  margin-top: 32px;
+  margin-top: 28px;
   align-items: start;
 }
-.bar-col-main { text-align: center; }
-.bar-col-side  { text-align: left; }
+.bar-col { text-align: left; }
 
-/* Logo area — drop image into /static/logos/ and swap the placeholder */
-.bar-logo-area { margin-bottom: 28px; }
+/* Logo area */
+.bar-logo-area { margin-bottom: 20px; }
 .logo-placeholder {
   display: inline-block;
   border: 2px solid var(--accent);
@@ -132,9 +131,11 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   letter-spacing: .08em; color: var(--accent); line-height: 1;
 }
 .logo-img {
-  max-height: 110px; max-width: 260px;
+  max-height: 160px; max-width: 340px;
   object-fit: contain; display: block; margin: 0 auto;
 }
+/* Dissolve white logo backgrounds on dark theme */
+.alibi-theme .logo-img { mix-blend-mode: screen; }
 
 .bar-name {
   font-family: 'Bebas Neue', cursive;
@@ -147,26 +148,42 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   color: var(--muted); margin-bottom: 16px;
 }
 .bar-about {
-  font-size: .93rem; line-height: 1.75;
-  color: var(--muted); margin-bottom: 30px;
+  font-size: .95rem; line-height: 1.8;
+  color: var(--muted); margin: 0 auto 24px;
+  max-width: 620px; text-align: center;
+}
+
+/* ── Unified 3-box card system ── */
+.home-special,
+.bar-hours,
+.home-events {
+  width: 100%; box-sizing: border-box;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 0 0 6px 6px;
+  padding: 1.5rem;
+  min-height: 160px;
+  text-align: left;
 }
 
 .bar-hours {
-  display: inline-block; margin-bottom: 36px;
-  border: 1px solid var(--border); border-radius: 4px;
-  padding: 18px 30px; font-size: .87rem; line-height: 2;
-  color: var(--muted); text-align: left;
+  font-size: .87rem; line-height: 2; color: var(--muted);
 }
 .bar-hours-label {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--text); display: block; margin-bottom: 4px;
+  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--accent); display: block; margin-bottom: 6px;
 }
 
-/* Address + phone line on home page */
+/* Below-grid row: contact + menu button */
+.bar-bottom {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 18px; margin-top: 28px;
+}
 .bar-contact {
   display: flex; align-items: center; gap: 8px;
-  margin-bottom: 28px; flex-wrap: wrap; justify-content: center;
+  flex-wrap: wrap; justify-content: center;
 }
 .bar-address-link, .bar-phone-link {
   font-size: .83rem; color: var(--muted); text-decoration: none;
@@ -509,36 +526,24 @@ body.manager-page {
 }
 .event-desc  { font-size: .81rem; color: var(--muted); margin-top: 4px; line-height: 1.45; }
 
-/* Home page — daily special card */
-.home-special {
-  width: 100%;
-  background: var(--accent); border-radius: 4px; padding: 16px 20px;
-  text-align: left;
-}
-.home-special-label {
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
-  color: rgba(255,255,255,.65); margin-bottom: 6px;
-}
-.home-special-body {
-  display: flex; justify-content: space-between; align-items: center; gap: 12px;
-}
-.home-special-title { font-weight: 700; font-size: 1.05rem; color: #fff; }
-.home-special-desc  { font-size: .84rem; color: rgba(255,255,255,.75); margin-top: 3px; }
-.home-special-price {
-  font-family: 'Bebas Neue', cursive; font-size: 2rem;
-  color: #fff; letter-spacing: .04em; white-space: nowrap;
-}
-
-/* Home page — events & announcements */
-.home-events {
-  width: 100%; text-align: left;
-}
+/* Home page — daily special card (inherits unified card style above) */
+.home-special-label,
 .home-events-label {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
   font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 8px;
+  color: var(--accent); display: block; margin-bottom: 8px;
 }
+.home-special-body {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+}
+.home-special-title { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+.home-special-desc  { font-size: .84rem; color: var(--muted); margin-top: 3px; }
+.home-special-price {
+  font-family: 'Bebas Neue', cursive; font-size: 2rem;
+  color: var(--accent); letter-spacing: .04em; white-space: nowrap;
+}
+
+/* Home page — events & announcements (inherits unified card style above) */
 .home-event-card {
   border-left: 3px solid var(--accent);
   padding: 10px 14px; margin-bottom: 8px;
@@ -578,8 +583,8 @@ body.manager-page {
   .bar-columns {
     grid-template-columns: 1fr;
   }
-  .bar-col-side { text-align: center; }
-  .home-special, .home-events { max-width: 500px; margin-left: auto; margin-right: auto; }
+  .bar-col { text-align: center; }
+  .home-special, .bar-hours, .home-events { max-width: 500px; margin-left: auto; margin-right: auto; }
 }
 @media (max-width: 700px) {
   .bar-hours { padding: 16px 20px; }
