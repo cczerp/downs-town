@@ -238,7 +238,7 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
 /* Logo in topbar */
 .topbar-logo-area { display: flex; align-items: center; }
 .topbar-logo-img {
-  max-height: 34px; max-width: 140px; object-fit: contain; display: block;
+  max-height: 68px; max-width: 280px; object-fit: contain; display: block;
 }
 .topbar-logo-text {
   font-family: 'Bebas Neue', cursive; font-size: 1.4rem;
