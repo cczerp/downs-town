@@ -32,14 +32,14 @@ document.querySelectorAll('.bar-tab').forEach(btn => {
 });
 
 function renderSpecial(bar, special) {
-  // Manager override takes priority; Alibi falls back to weekly schedule
+  // Manager override takes priority; Alibi falls back to M-F weekly schedule
   let display = (special && special.title) ? special : null;
-  if (!display && bar === 'alibi') {
-    display = ALIBI_WEEKLY[new Date().getDay()];
-  }
+  const day = new Date().getDay();
+  if (!display && bar === 'alibi') display = ALIBI_WEEKLY[day]; // null on Sat/Sun
   const has = !!display;
-  document.getElementById(bar + 'SpecialTitle').textContent = has ? display.title         : 'Check Back Soon';
-  document.getElementById(bar + 'SpecialDesc').textContent  = has ? (display.description || '') : "Today\u2019s special hasn\u2019t been posted yet.";
+  const noWeekdaySpecial = !has && bar === 'alibi' && (day === 0 || day === 6);
+  document.getElementById(bar + 'SpecialTitle').textContent = has ? display.title         : (noWeekdaySpecial ? 'No Special Today'                          : 'Check Back Soon');
+  document.getElementById(bar + 'SpecialDesc').textContent  = has ? (display.description || '') : (noWeekdaySpecial ? 'Check back Monday for this week\u2019s specials.' : "Today\u2019s special hasn\u2019t been posted yet.");
   document.getElementById(bar + 'SpecialPrice').textContent = (has && display.price) ? '$' + display.price : '';
 }
 
