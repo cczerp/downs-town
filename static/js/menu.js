@@ -63,7 +63,7 @@ function renderMenu(menu) {
           <div class="menu-item">
             <div class="menu-item-top">
               <span class="menu-item-name">${esc(item.name)}</span>
-              <span class="menu-item-price">$${esc(item.price)}</span>
+              ${item.price ? `<span class="menu-item-price">$${esc(item.price)}</span>` : ''}
             </div>
             ${item.description ? `<div class="menu-item-desc">${esc(item.description)}</div>` : ''}
           </div>
@@ -74,7 +74,10 @@ function renderMenu(menu) {
 }
 
 // Categories that appear alongside their parent when that filter is active
-const COMPANIONS = { 'Burgers': 'Burger Add-Ons' };
+const COMPANIONS = {
+  'Burgers': 'Burger Add-Ons',
+  'Pizza':   'Pizza Toppings'
+};
 
 function setFilter(activeCat) {
   const companion = COMPANIONS[activeCat];

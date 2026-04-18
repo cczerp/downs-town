@@ -123,13 +123,26 @@ def default_menus():
                     {"name": "Taco Salad", "description": "", "price": "9.95"}
                 ],
                 "Pizza": [
-                    {"name": "10\" Cheese & Sauce", "description": "Toppings 1.75 each. Available: Pepperoni, Sausage, Hamburger, Bacon, Onions, Black Olives, Green Olives, Tomatoes, Mushrooms, Green Peppers, Sweet Peppers", "price": "10.95"},
-                    {"name": "12\" Cheese & Sauce", "description": "Toppings 1.50 each", "price": "13.95"},
-                    {"name": "16\" Cheese & Sauce", "description": "Toppings 1.75 each", "price": "17.95"},
+                    {"name": "10\" Cheese & Sauce", "description": "Add toppings $1.50 each", "price": "10.95"},
+                    {"name": "12\" Cheese & Sauce", "description": "Add toppings $1.50 each", "price": "13.95"},
+                    {"name": "16\" Cheese & Sauce", "description": "Add toppings $1.50 each", "price": "17.95"},
                     {"name": "Roger's Special", "description": "Black Olives, Onions, Sausage, Hamburger & Mushrooms", "price": "18.95 / 18.95 / 24.95"},
                     {"name": "Bacon Cheeseburger Pizza", "description": "Hamburger, Cheese, Onions, Bacon & Pickles", "price": "18.95 / 18.95 / 22.95"},
                     {"name": "Gyro Pizza", "description": "Lamb, Onions, Tomatoes, Cheese, Side of Tzatziki Sauce", "price": "19.95 / 19.95 / 22.95"},
                     {"name": "Cauliflower Crust (12\", 3 toppings)", "description": "", "price": "13.95"}
+                ],
+                "Pizza Toppings": [
+                    {"name": "Pepperoni",     "description": "", "price": ""},
+                    {"name": "Sausage",       "description": "", "price": ""},
+                    {"name": "Hamburger",     "description": "", "price": ""},
+                    {"name": "Bacon",         "description": "", "price": ""},
+                    {"name": "Onions",        "description": "", "price": ""},
+                    {"name": "Black Olives",  "description": "", "price": ""},
+                    {"name": "Green Olives",  "description": "", "price": ""},
+                    {"name": "Tomatoes",      "description": "", "price": ""},
+                    {"name": "Mushrooms",     "description": "", "price": ""},
+                    {"name": "Green Peppers", "description": "", "price": ""},
+                    {"name": "Sweet Peppers", "description": "", "price": ""}
                 ],
                 "Weekly Specials": [
                     {"name": "Monday: P.B. Bacon Burger* with Fries", "description": "", "price": "8.95"},
@@ -214,8 +227,42 @@ def default_menus():
         }
     }
 
+PIZZA_TOPPINGS = [
+    {"name": "Pepperoni",     "description": "", "price": ""},
+    {"name": "Sausage",       "description": "", "price": ""},
+    {"name": "Hamburger",     "description": "", "price": ""},
+    {"name": "Bacon",         "description": "", "price": ""},
+    {"name": "Onions",        "description": "", "price": ""},
+    {"name": "Black Olives",  "description": "", "price": ""},
+    {"name": "Green Olives",  "description": "", "price": ""},
+    {"name": "Tomatoes",      "description": "", "price": ""},
+    {"name": "Mushrooms",     "description": "", "price": ""},
+    {"name": "Green Peppers", "description": "", "price": ""},
+    {"name": "Sweet Peppers", "description": "", "price": ""}
+]
+
+def migrate_bar_data(data):
+    """One-time migrations applied to persisted data."""
+    changed = False
+    alibi_menu = data.get('alibi', {}).get('menu', {})
+
+    # Fix pizza descriptions and add Pizza Toppings companion category
+    if 'Pizza Toppings' not in alibi_menu and 'Pizza' in alibi_menu:
+        for item in alibi_menu['Pizza']:
+            if 'Cheese & Sauce' in item['name']:
+                item['description'] = 'Add toppings $1.50 each'
+        alibi_menu['Pizza Toppings'] = PIZZA_TOPPINGS
+        changed = True
+
+    if changed:
+        try:
+            save_json('bar_data.json', data)
+        except Exception:
+            pass
+    return data
+
 def load_bar_data():
-    return load_json('bar_data.json', default_menus())
+    return migrate_bar_data(load_json('bar_data.json', default_menus()))
 
 def save_bar_data(data):
     save_json('bar_data.json', data)
