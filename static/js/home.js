@@ -4,6 +4,18 @@ const esc = s => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;')
   .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Alibi weekly special schedule — auto-displayed unless manager posts an override
+// Index = getDay() result: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+const ALIBI_WEEKLY = [
+  null, // Sunday
+  { title: 'P.B. Bacon Burger & Fries',        description: '',                                              price: '8.95' },
+  { title: 'Taco Tuesday',                       description: '2 Tacos  ·  or  ·  Indian Taco · $8.95',      price: '4.50' },
+  { title: 'Wednesday Specials',                 description: 'Loaded Nachos · $8.95  or  Gyros To-Go · $5.95', price: ''   },
+  { title: 'Italian Beef or French Dip',         description: '',                                              price: '6.95' },
+  { title: '2 Cheeseburgers & 12″ Pizza',        description: '3-topping pizza included',                     price: '8.95' },
+  null  // Saturday
+];
+
 function switchBar(bar) {
   document.body.classList.remove('alibi-theme', 'ogden-theme');
   document.body.classList.add(bar + '-theme');
@@ -20,10 +32,15 @@ document.querySelectorAll('.bar-tab').forEach(btn => {
 });
 
 function renderSpecial(bar, special) {
-  const hasContent = special && special.title;
-  document.getElementById(bar + 'SpecialTitle').textContent = hasContent ? special.title         : 'Check Back Soon';
-  document.getElementById(bar + 'SpecialDesc').textContent  = hasContent ? (special.description || '') : "Today\u2019s special hasn\u2019t been posted yet.";
-  document.getElementById(bar + 'SpecialPrice').textContent = (hasContent && special.price) ? '$' + special.price : '';
+  // Manager override takes priority; Alibi falls back to weekly schedule
+  let display = (special && special.title) ? special : null;
+  if (!display && bar === 'alibi') {
+    display = ALIBI_WEEKLY[new Date().getDay()];
+  }
+  const has = !!display;
+  document.getElementById(bar + 'SpecialTitle').textContent = has ? display.title         : 'Check Back Soon';
+  document.getElementById(bar + 'SpecialDesc').textContent  = has ? (display.description || '') : "Today\u2019s special hasn\u2019t been posted yet.";
+  document.getElementById(bar + 'SpecialPrice').textContent = (has && display.price) ? '$' + display.price : '';
 }
 
 function renderEvents(bar, events) {
@@ -43,6 +60,21 @@ function renderEvents(bar, events) {
   ).join('');
 }
 
+function updateOpenBadge(id, isOpen) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = isOpen ? 'Open Now' : 'Closed';
+  el.className   = 'hours-status ' + (isOpen ? 'is-open' : 'is-closed');
+}
+
+function updateHoursStatus() {
+  const h   = new Date().getHours();
+  // Alibi: 10am – 2am daily (spans midnight)
+  updateOpenBadge('alibiOpenStatus', h >= 10 || h < 2);
+  // Ogden: 11am – 9pm or later daily (treating 9pm as nominal close)
+  updateOpenBadge('ogdenOpenStatus', h >= 11 && h < 21);
+}
+
 async function loadBarInfo() {
   try {
     const res  = await fetch('/api/bars');
@@ -52,6 +84,7 @@ async function loadBarInfo() {
     renderEvents('alibi',  data.alibi.events);
     renderEvents('ogden',  data.ogden.events);
   } catch { /* defaults already showing in HTML */ }
+  updateHoursStatus();
 }
 
 loadBarInfo();
