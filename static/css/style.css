@@ -234,19 +234,7 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   max-width: 1100px; margin: 0 auto; padding: 0 24px;
   height: 56px; display: flex; align-items: center; justify-content: space-between;
 }
-
-/* Logo in topbar */
-.topbar-logo-area { display: flex; align-items: center; }
-.topbar-logo-img {
-  max-height: 68px; max-width: 280px; object-fit: contain; display: block;
-}
-.topbar-logo-text {
-  font-family: 'Bebas Neue', cursive; font-size: 1.4rem;
-  letter-spacing: .08em; color: var(--accent);
-}
-
-/* Right side of topbar — call button + back link */
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-inner--right { justify-content: flex-end; gap: 12px; }
 .topbar-call {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
   font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
@@ -284,8 +272,17 @@ body.ogden-theme { background: var(--bg); color: var(--text); }
   letter-spacing: .04em; white-space: nowrap;
 }
 
-/* Menu hero */
-.menu-hero { max-width: 1100px; margin: 0 auto; padding: 44px 24px 0; }
+/* Menu hero — logo left, MENU heading right */
+.menu-hero {
+  max-width: 1100px; margin: 0 auto; padding: 44px 24px 0;
+  display: flex; align-items: center; gap: 32px;
+}
+.menu-hero-logo {
+  max-height: 140px; max-width: 200px;
+  object-fit: contain; flex-shrink: 0;
+}
+.alibi-theme .menu-hero-logo { mix-blend-mode: screen; }
+.menu-hero-text { display: flex; flex-direction: column; }
 .menu-hero-name {
   font-family: 'Bebas Neue', cursive;
   font-size: clamp(2.4rem, 5.5vw, 3.8rem);
