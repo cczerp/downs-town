@@ -24,7 +24,7 @@
 
   <div class="home-stage">
 
-    <!-- ── TOGGLE ── -->
+    <!-- ── BAR TOGGLE ── -->
     <div class="bar-toggle-wrap">
       <button class="bar-tab active" data-bar="alibi">Alibi</button>
       <span class="toggle-divider">⬡</span>
@@ -34,22 +34,29 @@
     <!-- ══ ALIBI ══ -->
     <div class="bar-content" id="alibiContent">
 
-      <div class="bar-logo-area">
-        <img src="/static/logos/alibi-logo.jpg" alt="Alibi" class="logo-img"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
-        <div class="logo-placeholder" style="display:none">Alibi</div>
+      <!-- ── HERO ── -->
+      <div class="bar-hero">
+        <div class="bar-logo-area">
+          <img src="/static/logos/alibi-logo.jpg" alt="Alibi" class="logo-img"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <div class="logo-placeholder" style="display:none">Alibi</div>
+        </div>
+        <h1 class="bar-name">Alibi</h1>
+        <p class="bar-tagline">Where regulars become family</p>
+        <span class="hours-status hero-status" id="alibiOpenStatus"></span>
+        <div class="hero-cta">
+          <a href="/alibi/menu" class="cta-menu">View Menu</a>
+          <a href="tel:7157329569" class="cta-call">&#9742;&nbsp; 715-732-9569</a>
+        </div>
+        <p class="bar-about">
+          A lively sports bar with scratch kitchen food, ice-cold drafts,
+          and no bad seats in the house.
+        </p>
       </div>
-      <h1 class="bar-name">Alibi</h1>
-      <p class="bar-tagline">Where regulars become family</p>
-      <p class="bar-about">
-        A lively sports bar with scratch kitchen food, ice-cold drafts,
-        and no bad seats in the house.
-      </p>
 
-      <!-- 3-column card row -->
+      <!-- ── INFO CARDS ── -->
       <div class="bar-columns">
 
-        <!-- TODAY'S SPECIAL -->
         <div class="bar-col">
           <div class="home-special" id="alibiSpecial">
             <div class="home-special-label">Today's Special</div>
@@ -63,19 +70,16 @@
           </div>
         </div>
 
-        <!-- HOURS -->
         <div class="bar-col">
           <div class="bar-hours">
             <span class="bar-hours-label">Hours</span>
             <div class="hours-body">
-              <span class="hours-status" id="alibiOpenStatus"></span>
               <div class="hours-main">10am &ndash; 2am</div>
               <div class="hours-sub">Open Every Day</div>
             </div>
           </div>
         </div>
 
-        <!-- EVENTS & ANNOUNCEMENTS -->
         <div class="bar-col">
           <div class="home-events" id="alibiEvents">
             <div class="home-events-label">Events &amp; Announcements</div>
@@ -90,14 +94,8 @@
 
       </div><!-- /bar-columns -->
 
-      <!-- Address, phone, menu button -->
-      <div class="bar-bottom">
-        <div class="bar-contact">
-          <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener" class="bar-address-link">829 Main St, Marinette, WI</a>
-          <span class="bar-contact-sep">&middot;</span>
-          <a href="tel:7157329569" class="bar-phone-link">715-732-9569</a>
-        </div>
-        <a href="/alibi/menu" class="menu-btn">Menu &rarr;</a>
+      <div class="bar-contact-row">
+        <a href="https://maps.google.com/?q=829+Main+St+Marinette+WI+54143" target="_blank" rel="noopener" class="bar-address-link">&#x1F4CD; 829 Main St, Marinette, WI</a>
       </div>
 
     </div><!-- /alibiContent -->
@@ -105,19 +103,27 @@
     <!-- ══ OGDEN CLUB ══ -->
     <div class="bar-content" id="ogdenContent" style="display:none">
 
-      <div class="bar-logo-area">
-        <img src="/static/logos/odg-logo.jpg" alt="The Ogden Club" class="logo-img"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
-        <div class="logo-placeholder" style="display:none">The Ogden Club</div>
+      <!-- ── HERO ── -->
+      <div class="bar-hero">
+        <div class="bar-logo-area">
+          <img src="/static/logos/odg-logo.jpg" alt="The Ogden Club" class="logo-img"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <div class="logo-placeholder" style="display:none">The Ogden Club</div>
+        </div>
+        <h1 class="bar-name">The Ogden Club</h1>
+        <p class="bar-tagline">Your neighborhood's home base</p>
+        <span class="hours-status hero-status" id="ogdenOpenStatus"></span>
+        <div class="hero-cta">
+          <a href="/ogden/menu" class="cta-menu">View Menu</a>
+          <a href="tel:9064244141" class="cta-call">&#9742;&nbsp; 906-424-4141</a>
+        </div>
+        <p class="bar-about">
+          A cornerstone of the neighborhood. Cold beer, great food, and the kind
+          of crowd that makes every game day feel like a party.
+        </p>
       </div>
-      <h1 class="bar-name">The Ogden Club</h1>
-      <p class="bar-tagline">Your neighborhood's home base</p>
-      <p class="bar-about">
-        A cornerstone of the neighborhood. Cold beer, great food, and the kind
-        of crowd that makes every game day feel like a party.
-      </p>
 
-      <!-- 3-column card row -->
+      <!-- ── INFO CARDS ── -->
       <div class="bar-columns">
 
         <div class="bar-col">
@@ -137,7 +143,6 @@
           <div class="bar-hours">
             <span class="bar-hours-label">Hours</span>
             <div class="hours-body">
-              <span class="hours-status" id="ogdenOpenStatus"></span>
               <div class="hours-main">11am &ndash; 9pm</div>
               <div class="hours-sub">or Later &nbsp;&middot;&nbsp; 7 Days a Week</div>
             </div>
@@ -158,13 +163,8 @@
 
       </div><!-- /bar-columns -->
 
-      <div class="bar-bottom">
-        <div class="bar-contact">
-          <a href="https://maps.google.com/?q=414+10th+Ave+Menominee+MI+49858" target="_blank" rel="noopener" class="bar-address-link">414 10th Ave, Menominee, MI</a>
-          <span class="bar-contact-sep">&middot;</span>
-          <a href="tel:9064244141" class="bar-phone-link">906-424-4141</a>
-        </div>
-        <a href="/ogden/menu" class="menu-btn">Menu &rarr;</a>
+      <div class="bar-contact-row">
+        <a href="https://maps.google.com/?q=414+10th+Ave+Menominee+MI+49858" target="_blank" rel="noopener" class="bar-address-link">&#x1F4CD; 414 10th Ave, Menominee, MI</a>
       </div>
 
     </div><!-- /ogdenContent -->
